@@ -43,7 +43,7 @@ public class NameServerResponse
     /// <summary>Every service points at <c>https://&lt;name&gt;.rec.net</c>, all served by this process.</summary>
     public static NameServerResponse Local() => new()
     {
-        RecNetStatus = "https://recnetstatus.rec.net", AI = "https://ai.rec.net", Auth = "https://auth.rec.net",
+        RecNetStatus = "", AI = "https://ai.rec.net", Auth = "https://auth.rec.net",
         API = "https://api.rec.net", WWW = "https://www.rec.net", Notifications = "https://notifications.rec.net",
         Images = "https://img.rec.net", CDN = "https://cdn.rec.net", Commerce = "https://commerce.rec.net",
         Matchmaking = "https://match.rec.net", Storage = "https://storage.rec.net", Chat = "https://chat.rec.net",
