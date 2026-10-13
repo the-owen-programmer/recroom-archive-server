@@ -862,27 +862,7 @@
         ],
         "responses": {
           "200": {
-            "description": "OK",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "type": "array",
-                  "items": { }
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": { }
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "type": "array",
-                  "items": { }
-                }
-              }
-            }
+            "description": "OK"
           }
         }
       }
@@ -1330,6 +1310,32 @@
           "Post-login batch"
         ],
         "summary": "Feature-flag user properties upload. Accepted and ignored.",
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/player/exclusivelogin": {
+      "post": {
+        "tags": [
+          "Post-login batch"
+        ],
+        "summary": "\"Is another device logged in?\" check with a login lock. Always granted (single local player).",
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/account/me/email": {
+      "post": {
+        "tags": [
+          "Post-login batch"
+        ],
+        "summary": "Email prompt of the account setup flow (the player may answer \"no thanks\"). Accepted and ignored.",
         "responses": {
           "200": {
             "description": "OK"
