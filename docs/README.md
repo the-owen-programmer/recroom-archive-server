@@ -51,3 +51,6 @@ Verified from the live client log, in order: `GET auth.rec.net/cachedlogin/forpl
 - **eac/challenge shape:** a bare JSON string. Objects give "Malformed Response" / login error code `challenge`; the bare string moves the failure to code **`wrapper`**.
 - **Current blocker (client side): `wrapper`.** The EAC native wrapper is unavailable ("EAC runtime inactive"). `EACManager.GenerateChallengeResponse(string)` is at VA `0x187ee60a0` (file offset `0x7ee50a0`) and `EasyAntiCheat.Client.dll` `ClientAuth.WriteChallengeResponse` is a native icall. Needs a client patch (stub the EAC challenge-response step) or a stand-in for the EAC native library, plus a server that ignores the response. Helper: `tools/re/find_method_2024.py <GameAssembly.dll> <meta> <method regex> [class regex]`.
 - Also pending: `img.rec.net/DefaultProfileImage?width=512&sig=p1` returns 404 (world-layer image serving).
+
+## World layer
+Rooms, matchmaking, archived content (img/cdn), archive importers and the override folder: see `docs/worlds.md`.
