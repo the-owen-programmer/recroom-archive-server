@@ -33,7 +33,6 @@ public class PresenceService
                 IsOnline = me && _online,
                 RoomInstance = me ? _current : null,
                 AppVersion = me ? _appVersion : null,
-                LastOnline = DateTime.UtcNow,
             };
         }
     }
