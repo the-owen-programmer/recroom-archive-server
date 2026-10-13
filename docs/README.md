@@ -39,3 +39,9 @@ New problem: the client then fails the boot sequence with the RecNetStatus URL a
 
 ## Fake Steam (2026-10-13)
 Plan: no Steam client needed, so anyone can view worlds offline. The game uses Steamworks.NET (P/Invoke into `steam_api64.dll`), and "Failed to initialize Steam Platform" came from `SteamAPI_Init` failing under Wine. `tools/steamstub/gen.py` + `exports.txt` (the 995 exports of Valve's DLL) generate a stand-in DLL: init succeeds, interface accessors return a dummy object, fixed fake SteamID `76561198000000001`, 32-byte dummy auth ticket, everything else returns 0. Build: `python3 gen.py > stub.c && x86_64-w64-mingw32-gcc -shared -O1 -o steam_api64.dll stub.c -static-libgcc -Wl,--kill-at`, then drop it over `RecRoom_Data/Plugins/x86_64/steam_api64.dll` in a COPY of the build. The local server is meant to accept the fake ticket without authenticating it. Status: first test run in progress.
+
+## versioncheck done, fake Steam works (2026-10-13)
+- `GET api.rec.net/api/versioncheck/v4?v=20240815.01&p=0&pid=0` -> `{"VersionStatus":0,"UpdateNotificationStage":0,"IsCrossPlayDisabled":false}` and `GET .../versioncheck/islandedversions` -> `[]` (error code "student" without them). Client enums: VersionStatus 0 ValidForPlay / 1 UpdateRequired; UpdateNotificationStage 0 None .. 4 Require.
+- The Steam stand-in DLL works: "Platform: Steam" passes and the fake SteamID is sent on (`/cachedlogin/forplatformid/0/76561198000000001`; platform 0 = Steam).
+- Test tip: never start a second run while one is still going (shared logs/Wine prefix give misleading results); don't `pkill -f` a pattern that appears in your own command line.
+- Next requests: `GET auth.rec.net/cachedlogin/forplatformid/0/<steamid>` (404 -> "Unable to login (code: block)") and `GET econ.rec.net/api/avatar/v1/defaultunlocked` (404).

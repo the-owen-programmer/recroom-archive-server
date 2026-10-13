@@ -6,6 +6,159 @@
     "version": "v1"
   },
   "paths": {
+    "/account/bulk": {
+      "get": {
+        "tags": [
+          "Accounts (accounts.rec.net)"
+        ],
+        "summary": "Several accounts by id, query `?id=1&id=2`. Unknown ids are skipped.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "query",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "integer",
+                "format": "int32"
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/account/me": {
+      "get": {
+        "tags": [
+          "Accounts (accounts.rec.net)"
+        ],
+        "summary": "The logged-in account.",
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/account/{id}": {
+      "get": {
+        "tags": [
+          "Accounts (accounts.rec.net)"
+        ],
+        "summary": "One account by id.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/cachedlogin/forplatformid/{platform}/{platformId}": {
+      "get": {
+        "tags": [
+          "Auth (auth.rec.net)"
+        ],
+        "summary": "Cached logins for one platform account (platform 0 = Steam). The local player is returned for any id,\n            so the fake Steam ticket never has to be verified.",
+        "parameters": [
+          {
+            "name": "platform",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "platformId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/cachedlogin/forplatformids": {
+      "get": {
+        "tags": [
+          "Auth (auth.rec.net)"
+        ],
+        "summary": "Cached logins for several platform ids at once.",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/cachedlogin/current": {
+      "get": {
+        "tags": [
+          "Auth (auth.rec.net)"
+        ],
+        "summary": "The cached login of the current device.",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/generate_204": {
       "get": {
         "tags": [
@@ -120,6 +273,27 @@
                   "items": {
                     "$ref": "#/components/schemas/LoggedRequest"
                   }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/avatar/v1/defaultunlocked": {
+      "get": {
+        "tags": [
+          "Econ (econ.rec.net)"
+        ],
+        "summary": "Avatar items every player owns by default. Empty for now (the client keeps its built-in defaults).",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { }
                 }
               }
             }
@@ -257,6 +431,43 @@
         "responses": {
           "200": {
             "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/versioncheck/v4": {
+      "get": {
+        "tags": [
+          "VersionCheck (api.rec.net)"
+        ],
+        "summary": "Is this client version allowed to play? Client query: `?v=20240815.01&p=0&pid=0`.",
+        "description": "Client type `RecNet.VersionCheck.VersionCheckResponse`. `VersionStatus`: 0 ValidForPlay, 1 UpdateRequired.\n`UpdateNotificationStage`: 0 None, 1 Silent, 2 Warn, 3 Prompt, 4 Require. Always valid: the archived build is the only one.",
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/versioncheck/islandedversions": {
+      "get": {
+        "tags": [
+          "VersionCheck (api.rec.net)"
+        ],
+        "summary": "Versions that are \"islanded\" (kept apart from the main population). None.",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
           }
         }
       }
@@ -456,10 +667,19 @@
   },
   "tags": [
     {
+      "name": "Accounts (accounts.rec.net)"
+    },
+    {
+      "name": "Auth (auth.rec.net)"
+    },
+    {
       "name": "Connectivity (google.com)"
     },
     {
       "name": "Debug"
+    },
+    {
+      "name": "Econ (econ.rec.net)"
     },
     {
       "name": "GameConfigs (api.rec.net)"
@@ -475,6 +695,9 @@
     },
     {
       "name": "Third-party: Statsig (statsigapi.net)"
+    },
+    {
+      "name": "VersionCheck (api.rec.net)"
     }
   ]
 }
