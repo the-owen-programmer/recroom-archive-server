@@ -173,6 +173,20 @@
         }
       }
     },
+    "/connect/token": {
+      "post": {
+        "tags": [
+          "Auth (auth.rec.net)"
+        ],
+        "summary": "OAuth token endpoint. The client posts form fields: `grant_type=cached_login`, `account_id`, `platform`,\n            `platform_id`, `device_id`, `eac_challenge`, `eac_response`, `platform_auth` (JSON with the Steam ticket), and\n            built-in client constants. None of it is verified: the local player is always accepted.",
+        "description": "Response is the standard OAuth shape (a guess; to be corrected from the client's behaviour).",
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
     "/{path}": {
       "get": {
         "tags": [
