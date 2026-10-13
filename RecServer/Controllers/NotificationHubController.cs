@@ -42,6 +42,11 @@ public class NotificationHubController : ControllerBase
                         await Send(ws, "{}");
                     else if (msg.Contains("\"type\":6"))                    // ping -> ping
                         await Send(ws, "{\"type\":6}");
+                    else if (msg.Contains("\"type\":1"))                    // invocation -> completion (no result)
+                    {
+                        var m = System.Text.RegularExpressions.Regex.Match(msg, "\"invocationId\"\\s*:\\s*\"([^\"]*)\"");
+                        if (m.Success) await Send(ws, "{\"type\":3,\"invocationId\":\"" + m.Groups[1].Value + "\"}");
+                    }
                 }
             }
         }

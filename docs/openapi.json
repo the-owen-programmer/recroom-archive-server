@@ -749,6 +749,18 @@
         }
       }
     },
+    "/hub/v1": {
+      "get": {
+        "tags": [
+          "NotificationHub (notifications.rec.net)"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
     "/api/customAvatarItems/v1/isCreationAllowedForAccount": {
       "get": {
         "tags": [
@@ -845,6 +857,17 @@
                 }
               }
             }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Post-login batch"
+        ],
+        "summary": "Player settings upload (the client PUTs the whole settings list). Accepted and ignored.",
+        "responses": {
+          "200": {
+            "description": "OK"
           }
         }
       }
@@ -1100,6 +1123,61 @@
       "get": {
         "tags": [
           "Post-login batch"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/avatar/v1/defaultbaseavataritems": {
+      "get": {
+        "tags": [
+          "Post-login batch"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": { }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/subscription/details/{id}": {
+      "get": {
+        "tags": [
+          "Post-login batch"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
         ],
         "responses": {
           "200": {
@@ -2290,6 +2368,9 @@
     },
     {
       "name": "Matchmaking (match.rec.net)"
+    },
+    {
+      "name": "NotificationHub (notifications.rec.net)"
     },
     {
       "name": "Post-login batch"

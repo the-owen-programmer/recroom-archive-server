@@ -94,4 +94,16 @@ public class PostLoginController : ControllerBase
     /// <summary>Player settings upload (the client PUTs the whole settings list). Accepted and ignored.</summary>
     [Host("playersettings.rec.net")][HttpPut("/playersettings")]
     public IActionResult PutPlayerSettings() => Ok();
+
+    /// <summary>Friends / blocked / muted list of the local player. Nobody.</summary>
+    [Host("api.rec.net")][HttpGet("/api/relationships/v2/get")]
+    public object[] Relationships() => None;
+
+    /// <summary>Custom avatar items owned (paged by skip/take). None.</summary>
+    [Host("econ.rec.net")][HttpGet("/econ/customAvatarItems/v1/owned")]
+    public object OwnedCustomAvatarItems() => new { Results = None, TotalResults = 0 };
+
+    /// <summary>Chat threads (direct messages). None.</summary>
+    [Host("chat.rec.net")][HttpGet("/thread")]
+    public object[] ChatThreads() => None;
 }
