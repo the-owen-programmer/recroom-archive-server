@@ -33,3 +33,6 @@ Patching `PAFJKEDJMAI.LDHLOLGOKJC.IsValid` (file offset `0x6735270`) to `b0 01 c
 New problem: the client then fails the boot sequence with the RecNetStatus URL as the error message ("thinks servers are in maintenance"). Hypothesis being tested: `RecNetStatus` must be empty when RecNet is up (it is probably only filled in on outage). Setup note: a fresh checkout has no CA; run `certs/make-certs.sh` (and `tools/trust_ca_in_wine.py` for a new CA) and provide the ASP.NET 10 runtime in `.dotnet/root`.
 
 **Result:** an empty `RecNetStatus` fixes the maintenance screen (the field is only meant to be set on an outage). The client now requests `GET https://api.rec.net/api/gameconfigs/v1/all` (currently 404 from the fallback) and later logs "Failed to initialize Steam Platform" (not RecNet; this is a Steam-less run). Next: implement `gameconfigs/v1/all`, then follow the chain one request at a time.
+
+## gameconfigs/v1/all answered (2026-10-13)
+`GET api.rec.net/api/gameconfigs/v1/all` returns `[]` (client type `RecNet.GameConfig`: Key, Value, ActiveExperiments, StartTime, EndTime; empty = compiled-in defaults) and the client accepts it. Next blocker is **not the server**: "Failed to initialize Steam Platform" (the build wants a running Steam client). Need a non-Steam platform path or a Steamworks stand-in.

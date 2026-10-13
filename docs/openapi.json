@@ -127,6 +127,28 @@
         }
       }
     },
+    "/api/gameconfigs/v1/all": {
+      "get": {
+        "tags": [
+          "GameConfigs (api.rec.net)"
+        ],
+        "summary": "All game configs. Client type `RecNet.GameConfig`: Key, Value, ActiveExperiments, StartTime, EndTime.",
+        "description": "An empty list means every setting falls back to the value compiled into the client.",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/{path}": {
       "get": {
         "tags": [
@@ -438,6 +460,9 @@
     },
     {
       "name": "Debug"
+    },
+    {
+      "name": "GameConfigs (api.rec.net)"
     },
     {
       "name": "NameServer (ns.rec.net)"
