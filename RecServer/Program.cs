@@ -2,6 +2,7 @@ using System.Reflection;
 using System.Security.Cryptography.X509Certificates;
 using Microsoft.OpenApi;
 using RecServer.Infrastructure;
+using RecServer.Services;
 
 // Fake Rec Room backend (RecNet) for offline preservation.
 // Listens for HTTPS on REC_PORT (default 443); the certificate for whatever host name the client asks for (SNI) is issued
@@ -16,6 +17,9 @@ string certDir = Environment.GetEnvironmentVariable("REC_CERTS")
 string logDir = Environment.GetEnvironmentVariable("REC_LOGS")
                 ?? Path.Combine(AppContext.BaseDirectory, "..", "..", "..", "..", "logs");
 Directory.CreateDirectory(logDir);
+string dataDir = Environment.GetEnvironmentVariable("REC_DATA")
+                 ?? Path.Combine(AppContext.BaseDirectory, "..", "..", "..", "..", "data");
+int localAccountId = int.Parse(Environment.GetEnvironmentVariable("REC_ACCOUNT_ID") ?? "1");
 
 if (Environment.GetEnvironmentVariable("REC_LOGLEVEL") == "Debug")   // see TLS handshake failures and the alert the client sent
     builder.Logging.AddFilter("Microsoft.AspNetCore.Server.Kestrel", LogLevel.Debug);
@@ -26,6 +30,10 @@ builder.WebHost.ConfigureKestrel(k => k.ListenAnyIP(port, l => l.UseHttps(new Mi
 })));
 
 builder.Services.AddSingleton(new RequestLog(Path.Combine(logDir, "requests.jsonl")));
+var data = new DataStore(dataDir);
+builder.Services.AddSingleton(data);
+builder.Services.AddSingleton(new RoomService(data, Path.Combine(AppContext.BaseDirectory, "Seed", "rooms.json")));
+builder.Services.AddSingleton(new PresenceService(localAccountId));
 builder.Services.AddControllers().AddJsonOptions(o =>
 {
     o.JsonSerializerOptions.PropertyNamingPolicy = null; // keep PascalCase exactly as declared; the client's formatters are case sensitive
@@ -49,6 +57,7 @@ builder.Services.AddSwaggerGen(c =>
 
 var app = builder.Build();
 app.UseMiddleware<RequestLogMiddleware>();
+app.UseMiddleware<OverrideMiddleware>();   // data/overrides/<host>/<path>.json wins over everything below
 app.UseSwagger();
 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Fake Rec Room backend v1"));
 app.MapControllers();

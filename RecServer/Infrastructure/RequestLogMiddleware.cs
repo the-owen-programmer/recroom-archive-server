@@ -6,6 +6,8 @@ namespace RecServer.Infrastructure;
 /// <summary>Logs every request (host, path, interesting headers, first 4 KB of the body) and whether an endpoint handled it.</summary>
 public class RequestLogMiddleware
 {
+    /// <summary>HttpContext.Items key set by OverrideMiddleware when a canned file answered the request.</summary>
+    public const string OverrideKey = "rec.override";
     private static readonly string[] Interesting =
         { "Authorization", "X-Rec-Room-Key", "X-RNSK", "X-Rec-Platform", "X-Rec-Build", "Platform", "Cookie", "Accept", "Accept-Language", "X-Unity-Version" };
     private readonly RequestDelegate _next;
@@ -30,7 +32,7 @@ public class RequestLogMiddleware
             .Where(h => Interesting.Contains(h.Key, StringComparer.OrdinalIgnoreCase))
             .ToDictionary(h => h.Key, h => h.Value.ToString());
         var endpoint = ctx.GetEndpoint();
-        bool handled = req.Path.StartsWithSegments("/swagger") || endpoint != null && endpoint.DisplayName != "fallback" && !(endpoint.Metadata.GetMetadata<EndpointNameMetadata>()?.EndpointName == "fallback");
+        bool handled = ctx.Items.ContainsKey(OverrideKey) || req.Path.StartsWithSegments("/swagger") || endpoint != null && endpoint.DisplayName != "fallback" && !(endpoint.Metadata.GetMetadata<EndpointNameMetadata>()?.EndpointName == "fallback");
         _log.Add(new LoggedRequest(DateTime.Now, req.Host.ToString(), req.Method, req.Path, req.QueryString.ToString(),
             req.ContentType, req.Headers.UserAgent.ToString(), headers, body, ctx.Response.StatusCode, handled));
     }

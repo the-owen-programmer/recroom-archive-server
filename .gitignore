@@ -13,3 +13,6 @@ server.pem
 hosts.txt
 __pycache__/
 key.pem
+# local archive content and server state (see docs/worlds.md)
+data/*
+!data/README.md
