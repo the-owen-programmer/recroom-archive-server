@@ -85,7 +85,10 @@ out as `application/json`. A missing file is a 404, so the gap shows up in the l
   lives in the sub-room `DataBlob` field, which the public API never showed.
 - `cdn.rec.net/config/`: LoadingScreenTipData, AvatarEffectConfig_v1-3, RRPlusConfig_v1-3, SkuConfig_v1, Test_SkuConfig.
   Also `cdn.rec.net/avatar/*.assetbundle` files.
-- `img.rec.net/*`: room thumbnails and other images, fetched per name by `import_rooms.py --images`.
+- `img.rec.net/*`: **100,000+** archived images (the listing stopped at the tool's default limit). `import_rooms.py --images`
+  fetches the ones a room needs, by name.
+- All of `cdn.rec.net`: 1,618 archived files. Most are website content (1,136 `wwwcontent`, 198 `video`, 194 `static`),
+  plus 41 `img`, the 13 `room` blobs and the 9 `config` files. `config/LoadingScreenTipData` is real loading-screen tip data.
 
 `tools/wayback_mirror.py <host/prefix> [--list]` mirrors any of these into `data/`. It is resumable and keeps the newest capture
 per path.
