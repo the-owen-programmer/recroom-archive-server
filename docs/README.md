@@ -57,3 +57,6 @@ Verified from the live client log, in order: `GET auth.rec.net/cachedlogin/forpl
 - **Verified request** (live client): `POST auth.rec.net/connect/token`, `application/x-www-form-urlencoded`, fields `grant_type=cached_login`, `account_id`, `client_id`, `client_secret` and `build_key` (client constants), `platform`, `platform_id`, `device_id`, `device_class`, `time`, `ver`, `cid`, `asid`, `locale`, `isInitialLogin`, `dinfo`, `eac_challenge`, `eac_response`, `platform_auth` (JSON with the fake Steam ticket). No Authorization header.
 - 404 there gave "Unable to login (code: 3)" and the game quits ~2 s later (looks like a crash, is not).
 - Implemented: standard OAuth response with an HS256 JWT (`TokenService`); the shape of the response is a guess until the client's reaction is seen.
+
+## World layer
+Rooms, matchmaking, archived content (img/cdn), archive importers and the override folder: see `docs/worlds.md`.

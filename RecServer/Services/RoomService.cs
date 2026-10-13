@@ -36,8 +36,22 @@ public class RoomService
             if (e.ValueKind == JsonValueKind.Array) { foreach (var x in e.EnumerateArray()) Add(x, source); return; }
             var room = e.Deserialize<Room>(DataStore.Json);
             if (room == null || room.RoomId == 0 || room.Name.Length == 0) { Console.WriteLine($"{source}: room without RoomId/Name skipped"); return; }
-            // archived dumps have no sub-rooms: keep the scene info an earlier source (the seed, a hand-made file) had
-            if (room.SubRooms.Count == 0 && rooms.TryGetValue(room.RoomId, out var earlier)) room.SubRooms = earlier.SubRooms;
+            // archived dumps have no sub-rooms: keep the scene info an earlier source (the seed, a hand-made file) had for the
+            // same RoomId, or else for a built-in room of the same name (whose seed entry it then replaces)
+            if (room.SubRooms.Count == 0)
+            {
+                if (rooms.TryGetValue(room.RoomId, out var earlier)) room.SubRooms = earlier.SubRooms;
+                else if (rooms.Values.FirstOrDefault(r => r.IsRRO && string.Equals(r.Name, room.Name, StringComparison.OrdinalIgnoreCase)) is { } seeded)
+                {
+                    room.SubRooms = seeded.SubRooms.Select(sr => new SubRoom
+                    {
+                        Name = sr.Name, UnitySceneId = sr.UnitySceneId, DataBlob = sr.DataBlob, IsSandbox = sr.IsSandbox,
+                        MaxPlayers = sr.MaxPlayers, Accessibility = sr.Accessibility, Extra = sr.Extra,
+                    }).ToList();
+                    room.IsDorm |= seeded.IsDorm;
+                    rooms.Remove(seeded.RoomId);
+                }
+            }
             Normalize(room);
             rooms[room.RoomId] = room;
         }
@@ -66,7 +80,13 @@ public class RoomService
         r.PublishedAt ??= r.CreatedAt;
         r.RankedEntityId ??= r.RoomId.ToString();
         // notes such as "_archive" (where the import came from) are for people, not the client
-        foreach (var k in r.Extra?.Keys.Where(k => k.StartsWith('_')).ToList() ?? new()) r.Extra!.Remove(k);
+        StripNotes(r.Extra);
+        foreach (var s in r.SubRooms) StripNotes(s.Extra);
+    }
+
+    private static void StripNotes(Dictionary<string, JsonElement>? extra)
+    {
+        foreach (var k in extra?.Keys.Where(k => k.StartsWith('_')).ToList() ?? new()) extra!.Remove(k);
     }
 
     public IEnumerable<Room> All => _rooms.Values.OrderBy(r => r.Name, StringComparer.OrdinalIgnoreCase);

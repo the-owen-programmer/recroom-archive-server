@@ -51,6 +51,7 @@ public class ImagesController : ControllerBase
 [Tags("CDN (cdn.rec.net)")]
 public class CdnController : ControllerBase
 {
+    private static readonly FileExtensionContentTypeProvider Types = new();
     private readonly DataStore _data;
 
     public CdnController(DataStore data) => _data = data;
@@ -61,6 +62,16 @@ public class CdnController : ControllerBase
     {
         var file = string.IsNullOrEmpty(path) ? null : _data.SafePath("cdn", path);
         if (file == null || !System.IO.File.Exists(file)) return NotFound();
-        return PhysicalFile(file, "application/octet-stream", enableRangeProcessing: true);
+        return PhysicalFile(file, ContentType(file), enableRangeProcessing: true);
+    }
+
+    /// <summary>By extension; extension-less files (cdn.rec.net/config/LoadingScreenTipData) are JSON if they start like JSON.</summary>
+    private static string ContentType(string file)
+    {
+        if (Types.TryGetContentType(file, out var t)) return t;
+        using var f = System.IO.File.OpenRead(file);
+        int b;
+        while ((b = f.ReadByte()) is ' ' or '\t' or '\r' or '\n' or 0xEF or 0xBB or 0xBF) { }   // whitespace / UTF-8 BOM
+        return b is '{' or '[' ? "application/json" : "application/octet-stream";
     }
 }

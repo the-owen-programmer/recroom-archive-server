@@ -128,18 +128,26 @@ public class RoomInstance
     [JsonPropertyName("isInProgress")] public bool IsInProgress { get; set; }
 }
 
-/// <summary>Where a player is; match.rec.net <c>/player</c> and heartbeat responses.</summary>
+/// <summary>
+/// Where a player is; match.rec.net <c>/player</c> and heartbeat responses. Field names from the client's PlayerPresence type
+/// (Android class dump, relayed by the boot agent): PlayerId, StatusVisibility, PlatformType, DeviceClass, VRMovementMode,
+/// RoomInstance, CorrelationId, IsOnline, AppVersion, ClientJoinDataJson, ClientJoinData, PlayerType. Sent camelCase like the
+/// rest of match.rec.net; the client's JSON reader matched the camelCase accounts responses, so casing should not matter.
+/// </summary>
 public class PlayerPresence
 {
     [JsonPropertyName("playerId")] public int PlayerId { get; set; }
     [JsonPropertyName("statusVisibility")] public int StatusVisibility { get; set; }
-    [JsonPropertyName("platform")] public int Platform { get; set; } = 1;
+    [JsonPropertyName("platformType")] public int PlatformType { get; set; }
     [JsonPropertyName("deviceClass")] public int DeviceClass { get; set; }
     [JsonPropertyName("vrMovementMode")] public int VrMovementMode { get; set; }
     [JsonPropertyName("roomInstance")] public RoomInstance? RoomInstance { get; set; }
+    [JsonPropertyName("correlationId")] public string CorrelationId { get; set; } = "";
     [JsonPropertyName("isOnline")] public bool IsOnline { get; set; } = true;
     [JsonPropertyName("appVersion")] public string? AppVersion { get; set; }
-    [JsonPropertyName("lastOnline")] public DateTime LastOnline { get; set; } = DateTime.UtcNow;
+    [JsonPropertyName("clientJoinDataJson")] public string? ClientJoinDataJson { get; set; }
+    [JsonPropertyName("clientJoinData")] public object? ClientJoinData { get; set; }
+    [JsonPropertyName("playerType")] public int PlayerType { get; set; }
 }
 
 /// <summary>match.rec.net <c>/goto/...</c> result.</summary>
