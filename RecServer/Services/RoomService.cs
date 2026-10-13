@@ -36,6 +36,8 @@ public class RoomService
             if (e.ValueKind == JsonValueKind.Array) { foreach (var x in e.EnumerateArray()) Add(x, source); return; }
             var room = e.Deserialize<Room>(DataStore.Json);
             if (room == null || room.RoomId == 0 || room.Name.Length == 0) { Console.WriteLine($"{source}: room without RoomId/Name skipped"); return; }
+            // archived dumps have no sub-rooms: keep the scene info an earlier source (the seed, a hand-made file) had
+            if (room.SubRooms.Count == 0 && rooms.TryGetValue(room.RoomId, out var earlier)) room.SubRooms = earlier.SubRooms;
             Normalize(room);
             rooms[room.RoomId] = room;
         }
@@ -62,18 +64,21 @@ public class RoomService
         }
         if (r.Roles.Count == 0) r.Roles.Add(new RoomRole { AccountId = r.CreatorAccountId, Role = 255 });
         r.PublishedAt ??= r.CreatedAt;
+        r.RankedEntityId ??= r.RoomId.ToString();
+        // notes such as "_archive" (where the import came from) are for people, not the client
+        foreach (var k in r.Extra?.Keys.Where(k => k.StartsWith('_')).ToList() ?? new()) r.Extra!.Remove(k);
     }
 
     public IEnumerable<Room> All => _rooms.Values.OrderBy(r => r.Name, StringComparer.OrdinalIgnoreCase);
     public Room? Get(long id) => _rooms.GetValueOrDefault(id);
     public Room? ByName(string name) => _rooms.Values.FirstOrDefault(r => string.Equals(r.Name, name, StringComparison.OrdinalIgnoreCase));
-    public IEnumerable<Room> Public => All.Where(r => r.Accessibility == 1 && !r.IsDorm);
+    public IEnumerable<Room> Public => All.Where(r => r.Accessibility == 1 && !r.IsDorm && !r.ExcludeFromLists);
     public IEnumerable<Room> CreatedBy(int accountId) => All.Where(r => r.CreatorAccountId == accountId);
 
-    public IEnumerable<Room> Search(string query) => All.Where(r =>
+    public IEnumerable<Room> Search(string query) => All.Where(r => !r.ExcludeFromSearch && (
         r.Name.Contains(query, StringComparison.OrdinalIgnoreCase) ||
         r.Description.Contains(query, StringComparison.OrdinalIgnoreCase) ||
-        r.Tags.Any(t => t.Tag.Contains(query, StringComparison.OrdinalIgnoreCase)));
+        r.Tags.Any(t => t.Tag.Contains(query, StringComparison.OrdinalIgnoreCase))));
 
     /// <summary>The local player's dorm: the room flagged IsDorm in the catalog.</summary>
     public Room? Dorm => _rooms.Values.FirstOrDefault(r => r.IsDorm);

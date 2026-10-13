@@ -1,6 +1,6 @@
 [
   {
-    "RoomId": 1,
+    "RoomId": 9000000000000000001,
     "Name": "DormRoom",
     "Description": "Your private room.",
     "ImageName": "DefaultRoomImage.jpg",
@@ -8,17 +8,41 @@
     "IsRRO": true,
     "Accessibility": 0,
     "MaxPlayers": 4,
-    "SubRooms": [ { "SubRoomId": 11, "Name": "Home", "UnitySceneId": "76d98498-60a1-430c-ab76-b54a29b7a163", "MaxPlayers": 4, "Accessibility": 0 } ],
-    "Tags": [ { "Tag": "rro", "Type": 2 } ]
+    "SubRooms": [
+      {
+        "SubRoomId": 9000000000000000011,
+        "Name": "Home",
+        "UnitySceneId": "76d98498-60a1-430c-ab76-b54a29b7a163",
+        "MaxPlayers": 4,
+        "Accessibility": 0
+      }
+    ],
+    "Tags": [
+      {
+        "Tag": "rro",
+        "Type": 2
+      }
+    ]
   },
   {
-    "RoomId": 2,
+    "RoomId": 170126,
     "Name": "RecCenter",
-    "Description": "The Rec Center.",
+    "Description": "The Rec Center. Seed entry; import the archived room (tools/import_rooms.py wayback --name RecCenter) for the real metadata and thumbnail.",
     "ImageName": "DefaultRoomImage.jpg",
     "IsRRO": true,
     "MaxPlayers": 20,
-    "SubRooms": [ { "SubRoomId": 21, "Name": "Home", "UnitySceneId": "cbad71af-0831-44d8-b8ef-69edafa841f6" } ],
-    "Tags": [ { "Tag": "rro", "Type": 2 } ]
+    "SubRooms": [
+      {
+        "SubRoomId": 1701261,
+        "Name": "Home",
+        "UnitySceneId": "cbad71af-0831-44d8-b8ef-69edafa841f6"
+      }
+    ],
+    "Tags": [
+      {
+        "Tag": "rro",
+        "Type": 2
+      }
+    ]
   }
 ]

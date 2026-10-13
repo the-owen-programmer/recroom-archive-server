@@ -1,9 +1,11 @@
+using System.Text.Json;
 using System.Text.Json.Serialization;
 
 namespace RecServer.Models;
 
-// Room shapes as rooms.rec.net served them (PascalCase) around 2023-2024. Field list comes from the public rooms API; not yet
-// checked against the 2024-08-20 client's RoomDetails classes, so expect to fix names from requests.jsonl / overrides.
+// Room shapes as rooms.rec.net served them (PascalCase). Field list from Wayback captures of rooms.rec.net/rooms/{id}
+// (May-June 2026) and the public rooms API; not yet checked against the 2024-08-20 client's RoomDetails classes.
+// Fields the server does not model are kept in Extra and written back unchanged, so archived JSON round-trips losslessly.
 
 public class Room
 {
@@ -38,6 +40,17 @@ public class Room
     public int WarningMask { get; set; }
     public string? CustomWarning { get; set; }
     public int Version { get; set; } = 1;
+    /// <summary>0 = published.</summary>
+    public int PublishState { get; set; }
+    public int AgeRating { get; set; }
+    public bool IsRecRoomApproved { get; set; }
+    public bool ExcludeFromLists { get; set; }
+    public bool ExcludeFromSearch { get; set; }
+    public bool IsPlacePlay { get; set; }
+    public bool IsDeveloperOwned { get; set; }
+    public int UgcVersion { get; set; } = 1;
+    public int PersistenceVersion { get; set; }
+    public string? RankedEntityId { get; set; }
     public DateTime CreatedAt { get; set; } = new(2016, 6, 1, 0, 0, 0, DateTimeKind.Utc);
     public DateTime? PublishedAt { get; set; }
     public RoomStats Stats { get; set; } = new();
@@ -47,6 +60,9 @@ public class Room
     public List<object> PromoImages { get; set; } = new();
     public List<object> PromoExternalContent { get; set; } = new();
     public List<object> LoadScreens { get; set; } = new();
+
+    /// <summary>Every other field of the archived JSON, passed through as-is.</summary>
+    [JsonExtensionData] public Dictionary<string, JsonElement>? Extra { get; set; }
 }
 
 public class SubRoom
@@ -62,6 +78,8 @@ public class SubRoom
     public bool IsSandbox { get; set; }
     public int MaxPlayers { get; set; } = 20;
     public int Accessibility { get; set; } = 1;
+
+    [JsonExtensionData] public Dictionary<string, JsonElement>? Extra { get; set; }
 }
 
 public class RoomStats
