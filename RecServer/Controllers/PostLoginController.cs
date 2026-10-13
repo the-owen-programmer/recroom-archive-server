@@ -13,6 +13,9 @@ namespace RecServer.Controllers;
 [Tags("Post-login batch")]
 public class PostLoginController : ControllerBase
 {
+    private readonly RecServer.Services.PlayerSettingsStore _settings;
+    public PostLoginController(RecServer.Services.PlayerSettingsStore settings) => _settings = settings;
+
     private static readonly object[] None = [];
 
     [Host("api.rec.net")][HttpGet("/api/customAvatarItems/v1/isCreationAllowedForAccount")]
@@ -39,7 +42,7 @@ public class PostLoginController : ControllerBase
     };
 
     [Host("playersettings.rec.net")][HttpGet("/playersettings")]
-    public object[] PlayerSettings() => None;
+    public object[] PlayerSettings() => _settings.All();   // list of {Key, Value}; shape is a guess
 
     [Host("api.rec.net")][HttpGet("/outfits/me")]
     public object Outfits() => new { Outfits = None };   // an object is required (a bare list is "malformed"); key verified by trial
@@ -98,7 +101,11 @@ public class PostLoginController : ControllerBase
 
     /// <summary>Player settings upload (the client PUTs the whole settings list). Accepted and ignored.</summary>
     [Host("playersettings.rec.net")][HttpPut("/playersettings")]
-    public IActionResult PutPlayerSettings() => Ok();
+    public IActionResult PutPlayerSettings([FromForm] string? key, [FromForm] string? value)
+    {
+        if (!string.IsNullOrEmpty(key)) _settings.Set(key, value ?? "");
+        return Ok();
+    }
 
     /// <summary>Friends / blocked / muted list of the local player. Nobody.</summary>
     [Host("api.rec.net")][HttpGet("/api/relationships/v2/get")]
@@ -133,4 +140,12 @@ public class PostLoginController : ControllerBase
     /// <summary>Email prompt of the account setup flow (the player may answer "no thanks"). Accepted and ignored.</summary>
     [Host("accounts.rec.net")][HttpPost("/account/me/email")]
     public object SetEmail() => new { Success = true };
+
+    /// <summary>Telemetry sampling config (the client asks per session). Sampling off; shape is a guess.</summary>
+    [Host("datacollection.rec.net")][HttpGet("/sampling")]
+    public object Sampling() => new { SampleRate = 0.0 };
+
+    /// <summary>Main remote config. Minimal guessed shape; the client falls back to built-in defaults for missing values.</summary>
+    [Host("api.rec.net")][HttpGet("/api/config/v2")]
+    public object ConfigV2() => new { MessageOfTheDay = "", CdnBaseUri = "https://cdn.rec.net/" };
 }

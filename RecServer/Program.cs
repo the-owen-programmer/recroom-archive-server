@@ -32,6 +32,7 @@ builder.WebHost.ConfigureKestrel(k => k.ListenAnyIP(port, l => l.UseHttps(new Mi
 builder.Services.AddSingleton(new RequestLog(Path.Combine(logDir, "requests.jsonl")));
 var data = new DataStore(dataDir);
 builder.Services.AddSingleton(data);
+builder.Services.AddSingleton(new PlayerSettingsStore(dataDir));
 builder.Services.AddSingleton(new RoomService(data, Path.Combine(AppContext.BaseDirectory, "Seed", "rooms.json")));
 builder.Services.AddSingleton(new PresenceService(localAccountId));
 builder.Services.AddControllers().AddJsonOptions(o =>
