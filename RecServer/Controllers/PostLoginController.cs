@@ -87,13 +87,13 @@ public class PostLoginController : ControllerBase
     };
 
     [Host("match.rec.net")][HttpGet("/player/qos")]
-    public object Qos() => new { };
+    public object[] Qos() => None;   // list of QosEndpointDTO {Id, Address}
 
     [Host("econ.rec.net")][HttpGet("/api/avatar/v1/defaultbaseavataritems")]
     public object[] DefaultBaseAvatarItems() => None;
 
     [Host("clubs.rec.net")][HttpGet("/subscription/details/{id:int}")]
-    public object ClubSubscriptionDetails(int id) => new { };
+    public object ClubSubscriptionDetails(int id) => new { AccountId = id, HasSubscription = false };   // shape is a guess
 
     /// <summary>Player settings upload (the client PUTs the whole settings list). Accepted and ignored.</summary>
     [Host("playersettings.rec.net")][HttpPut("/playersettings")]
@@ -113,7 +113,10 @@ public class PostLoginController : ControllerBase
 
     /// <summary>Storefront contents (type 3 = gift drops). Nothing for sale; shape is a guess.</summary>
     [Host("econ.rec.net")][HttpGet("/api/storefronts/v3/giftdropstore/{id:int}")]
-    public object GiftDropStore(int id) => new { StorefrontType = id, StoreItems = None, NextUpdate = (string?)null };
+    public object GiftDropStore(int id) => new   // GiftDropStorefront : BaseStorefrontDTO; NextUpdate is a non-nullable DateTime
+    {
+        StorefrontType = id, NextUpdate = "2030-01-01T00:00:00Z", NewUntil = (string?)null, StorefrontName = "", StoreItems = None, SubscriberDiscountPercent = 0,
+    };
 
     [Host("chat.rec.net")][HttpGet("/thread/party")]
     public object[] PartyThreads() => None;
