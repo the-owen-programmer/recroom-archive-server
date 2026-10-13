@@ -26,10 +26,24 @@ public class AuthController : ControllerBase
     [Produces("application/json")]
     public object[] Current() => [LocalPlayer.CachedLogin(0, "76561198000000001")];
 
+    private static int _eacTry;
+
     /// <summary>Easy Anti-Cheat handshake: the client asks for a challenge before logging in.</summary>
-    /// <remarks>Shape is a guess (an object with a <c>Challenge</c> string; the client has a <c>Challenge</c> property). EAC is not
-    /// running in the archive build ("EAC runtime inactive"), so any value is fine and the answer is never checked.</remarks>
+    /// <remarks>EXPERIMENT: the response shape is unknown ("Malformed Response" for {"Challenge":"..."}), so each request gets the next
+    /// candidate shape; the server log shows which one was sent. EAC is not running in the archive build ("EAC runtime inactive").</remarks>
     [HttpGet("/eac/challenge")]
-    [Produces("application/json")]
-    public object EacChallenge() => new { Challenge = Convert.ToBase64String(new byte[32]) };
+    public IActionResult EacChallenge()
+    {
+        int n = Interlocked.Increment(ref _eacTry) - 1;
+        string b64 = Convert.ToBase64String(new byte[16]);
+        Console.WriteLine($"eac/challenge attempt {n} shape {n % 5}");
+        return (n % 5) switch
+        {
+            0 => Content("\"" + b64 + "\"", "application/json"),
+            1 => new JsonResult(new { challenge = b64 }),
+            2 => Content(b64, "text/plain"),
+            3 => new JsonResult(new { Challenge = b64, ChallengeId = 1 }),
+            _ => new JsonResult(new[] { b64 }),
+        };
+    }
 }
