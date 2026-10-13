@@ -165,7 +165,7 @@
           "Auth (auth.rec.net)"
         ],
         "summary": "Easy Anti-Cheat handshake: the client asks for a challenge before logging in.",
-        "description": "Shape is a guess (an object with a `Challenge` string; the client has a `Challenge` property). EAC is not\n            running in the archive build (\"EAC runtime inactive\"), so any value is fine and the answer is never checked.",
+        "description": "EXPERIMENT: the response shape is unknown (\"Malformed Response\" for {\"Challenge\":\"...\"}), so each request gets the next\n            candidate shape; the server log shows which one was sent. EAC is not running in the archive build (\"EAC runtime inactive\").",
         "responses": {
           "200": {
             "description": "OK"
