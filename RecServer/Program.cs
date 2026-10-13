@@ -57,6 +57,7 @@ builder.Services.AddSwaggerGen(c =>
 
 var app = builder.Build();
 app.UseMiddleware<RequestLogMiddleware>();
+app.UseWebSockets();
 app.UseMiddleware<OverrideMiddleware>();   // data/overrides/<host>/<path>.json wins over everything below
 app.UseSwagger();
 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Fake Rec Room backend v1"));

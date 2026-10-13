@@ -165,7 +165,65 @@
           "Auth (auth.rec.net)"
         ],
         "summary": "Easy Anti-Cheat handshake: the client asks for a challenge before logging in.",
-        "description": "EXPERIMENT: the response shape is unknown (\"Malformed Response\" for {\"Challenge\":\"...\"}), so each request gets the next\n            candidate shape; the server log shows which one was sent. EAC is not running in the archive build (\"EAC runtime inactive\").",
+        "description": "Verified shape: a bare JSON string (`\"AAAAAAAAAAAAAAAAAAAAAA==\"`). An object (`{\"Challenge\":..}`, `{\"challenge\":..}`)\ngives \"Malformed Response\" and login error code `challenge`; the bare string moves the failure on to code `wrapper`\n(the EAC native wrapper, which is not available in the archive build: \"EAC runtime inactive\").",
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/connect/token": {
+      "post": {
+        "tags": [
+          "Auth (auth.rec.net)"
+        ],
+        "summary": "OAuth token endpoint. The client posts form fields: `grant_type=cached_login`, `account_id`, `platform`,\n            `platform_id`, `device_id`, `eac_challenge`, `eac_response`, `platform_auth` (JSON with the Steam ticket), and\n            built-in client constants. None of it is verified: the local player is always accepted.",
+        "description": "Response is the standard OAuth shape (a guess; to be corrected from the client's behaviour).",
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/{path}": {
+      "get": {
+        "tags": [
+          "CDN (cdn.rec.net)"
+        ],
+        "summary": "A blob by path (e.g. `/room/<blob name>`).",
+        "parameters": [
+          {
+            "name": "path",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Third-party: Unity cloud"
+        ],
+        "summary": "Accept any Unity cloud POST/GET with an empty JSON object.",
+        "parameters": [
+          {
+            "name": "path",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
         "responses": {
           "200": {
             "description": "OK"
@@ -294,6 +352,19 @@
         }
       }
     },
+    "/_debug/rooms/reload": {
+      "post": {
+        "tags": [
+          "Debug"
+        ],
+        "summary": "Re-read Seed/rooms.json and data/rooms/*.json (after tools/import_rooms.py) without restarting.",
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
     "/api/avatar/v1/defaultunlocked": {
       "get": {
         "tags": [
@@ -337,16 +408,38 @@
         }
       }
     },
-    "/{path}": {
+    "/{name}": {
       "get": {
         "tags": [
-          "NameServer (ns.rec.net)"
+          "Images (img.rec.net)"
         ],
-        "summary": "List the base URL of every RecNet service.",
-        "description": "The client logs \"RecNet name server query failed\" and \"Failed to connect to RecNet (error code: summer)\" when this\ndoes not answer. The exact path the client requests is not known yet, so every GET on this host returns the table;\ncheck `logs/requests.jsonl` for what the client really sends.",
+        "summary": "An image by name; the extension may be left off (the archive file can be .jpg or .png).",
         "parameters": [
           {
-            "name": "path",
+            "name": "name",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/goto/room/{roomName}": {
+      "post": {
+        "tags": [
+          "Matchmaking (match.rec.net)"
+        ],
+        "summary": "Go to a room by name (`RecCenter`, or `RecCenter.SubRoom` for a sub-room).",
+        "parameters": [
+          {
+            "name": "roomName",
             "in": "path",
             "required": true,
             "schema": {
@@ -358,33 +451,23 @@
           "200": {
             "description": "OK",
             "content": {
-              "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/NameServerResponse"
-                }
-              },
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/NameServerResponse"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/NameServerResponse"
+                  "$ref": "#/components/schemas/MatchmakingResponse"
                 }
               }
             }
           }
         }
       },
-      "post": {
+      "get": {
         "tags": [
-          "Third-party: Unity cloud"
+          "Matchmaking (match.rec.net)"
         ],
-        "summary": "Accept any Unity cloud POST/GET with an empty JSON object.",
+        "summary": "Go to a room by name (`RecCenter`, or `RecCenter.SubRoom` for a sub-room).",
         "parameters": [
           {
-            "name": "path",
+            "name": "roomName",
             "in": "path",
             "required": true,
             "schema": {
@@ -394,7 +477,1427 @@
         ],
         "responses": {
           "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MatchmakingResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/goto/roomid/{roomId}": {
+      "post": {
+        "tags": [
+          "Matchmaking (match.rec.net)"
+        ],
+        "summary": "Go to a room by id.",
+        "parameters": [
+          {
+            "name": "roomId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MatchmakingResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/goto/roominstance/{instanceId}": {
+      "post": {
+        "tags": [
+          "Matchmaking (match.rec.net)"
+        ],
+        "summary": "Re-join the current instance (the only instance that exists).",
+        "parameters": [
+          {
+            "name": "instanceId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MatchmakingResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/goto/player/{playerId}": {
+      "post": {
+        "tags": [
+          "Matchmaking (match.rec.net)"
+        ],
+        "summary": "\"Join player\": offline the only player is you, so this lands in your current room or dorm.",
+        "parameters": [
+          {
+            "name": "playerId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MatchmakingResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/goto/dorm": {
+      "post": {
+        "tags": [
+          "Matchmaking (match.rec.net)"
+        ],
+        "summary": "Go home.",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MatchmakingResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/goto/none": {
+      "post": {
+        "tags": [
+          "Matchmaking (match.rec.net)"
+        ],
+        "summary": "Leave the room (back to the title / loading screen).",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MatchmakingResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/player/heartbeat": {
+      "post": {
+        "tags": [
+          "Matchmaking (match.rec.net)"
+        ],
+        "summary": "Presence keep-alive while in game; returns where the player is.",
+        "parameters": [
+          {
+            "name": "X-Rec-Build",
+            "in": "header",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PlayerPresence"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/player": {
+      "get": {
+        "tags": [
+          "Matchmaking (match.rec.net)"
+        ],
+        "summary": "Presence of players (`?id=1&id=2`).",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "query",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "integer",
+                "format": "int32"
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/PlayerPresence"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/player/{id}": {
+      "get": {
+        "tags": [
+          "Matchmaking (match.rec.net)"
+        ],
+        "summary": "Presence of one player.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PlayerPresence"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/roominstance/{id}": {
+      "get": {
+        "tags": [
+          "Matchmaking (match.rec.net)"
+        ],
+        "summary": "The current room instance, if its id matches.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RoomInstance"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/hub/v1": {
+      "get": {
+        "tags": [
+          "NotificationHub (notifications.rec.net)"
+        ],
+        "responses": {
+          "200": {
             "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/customAvatarItems/v1/isCreationAllowedForAccount": {
+      "get": {
+        "tags": [
+          "Post-login batch"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/PlayerReporting/v1/moderationBlockDetails": {
+      "post": {
+        "tags": [
+          "Post-login batch"
+        ],
+        "summary": "Moderation: is this account currently blocked/banned? Zeroed = no.",
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/PlayerReporting/v1/hile": {
+      "post": {
+        "tags": [
+          "Post-login batch"
+        ],
+        "summary": "Cheat/anti-tamper report from the client (e.g. \"Signature missing\" for an image). Accepted and ignored.",
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/hub/v1/negotiate": {
+      "post": {
+        "tags": [
+          "Post-login batch"
+        ],
+        "summary": "SignalR negotiate for the notification hub. The hub itself (websocket) is not implemented yet.",
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/playersettings": {
+      "get": {
+        "tags": [
+          "Post-login batch"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": { }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { }
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Post-login batch"
+        ],
+        "summary": "Player settings upload (the client PUTs the whole settings list). Accepted and ignored.",
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/outfits/me": {
+      "get": {
+        "tags": [
+          "Post-login batch"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": { }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/avatar/v4/items": {
+      "get": {
+        "tags": [
+          "Post-login batch"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": { }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/data/event": {
+      "post": {
+        "tags": [
+          "Post-login batch"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/players/v2/progression/bulk": {
+      "get": {
+        "tags": [
+          "Post-login batch"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "query",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "integer",
+                "format": "int32"
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": { }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/playerReputation/v2/bulk": {
+      "get": {
+        "tags": [
+          "Post-login batch"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "query",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "integer",
+                "format": "int32"
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": { }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/crm/me/config/v2": {
+      "get": {
+        "tags": [
+          "Post-login batch"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/subscription/mine/member": {
+      "get": {
+        "tags": [
+          "Post-login batch"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": { }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/player/login": {
+      "post": {
+        "tags": [
+          "Post-login batch"
+        ],
+        "summary": "Matchmaking presence: the client announces itself with a login lock after sign-in.",
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/player/logout": {
+      "post": {
+        "tags": [
+          "Post-login batch"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/player/connection-info": {
+      "get": {
+        "tags": [
+          "Post-login batch"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/player/qos": {
+      "get": {
+        "tags": [
+          "Post-login batch"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/avatar/v1/defaultbaseavataritems": {
+      "get": {
+        "tags": [
+          "Post-login batch"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": { }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/subscription/details/{id}": {
+      "get": {
+        "tags": [
+          "Post-login batch"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/relationships/v2/get": {
+      "get": {
+        "tags": [
+          "Post-login batch"
+        ],
+        "summary": "Friends / blocked / muted list of the local player. Nobody.",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": { }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/econ/customAvatarItems/v1/owned": {
+      "get": {
+        "tags": [
+          "Post-login batch"
+        ],
+        "summary": "Custom avatar items owned (paged by skip/take). None.",
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/thread": {
+      "get": {
+        "tags": [
+          "Post-login batch"
+        ],
+        "summary": "Chat threads (direct messages). None.",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": { }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/storefronts/v3/giftdropstore/{id}": {
+      "get": {
+        "tags": [
+          "Post-login batch"
+        ],
+        "summary": "Storefront contents (type 3 = gift drops). Nothing for sale; shape is a guess.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/thread/party": {
+      "get": {
+        "tags": [
+          "Post-login batch"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": { }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/statsigUserProperties": {
+      "post": {
+        "tags": [
+          "Post-login batch"
+        ],
+        "summary": "Feature-flag user properties upload. Accepted and ignored.",
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/rooms/{id}": {
+      "get": {
+        "tags": [
+          "Rooms (rooms.rec.net)"
+        ],
+        "summary": "One room by id.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Room"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/rooms": {
+      "get": {
+        "tags": [
+          "Rooms (rooms.rec.net)"
+        ],
+        "summary": "One room by name (`?name=RecCenter`), the lookup `^RoomName` links use.",
+        "parameters": [
+          {
+            "name": "name",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Room"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/rooms/bulk": {
+      "get": {
+        "tags": [
+          "Rooms (rooms.rec.net)"
+        ],
+        "summary": "Several rooms by id and/or name (`?id=1&id=2&name=X`); unknown ones are left out.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "query",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "integer",
+                "format": "int64"
+              }
+            }
+          },
+          {
+            "name": "name",
+            "in": "query",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Room"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Rooms (rooms.rec.net)"
+        ],
+        "summary": "Bulk lookup with the ids as form fields (`id=1&id=2`).",
+        "requestBody": {
+          "content": {
+            "application/x-www-form-urlencoded": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "array",
+                    "items": {
+                      "type": "integer",
+                      "format": "int64"
+                    }
+                  },
+                  "name": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  }
+                }
+              },
+              "encoding": {
+                "id": {
+                  "style": "form"
+                },
+                "name": {
+                  "style": "form"
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Room"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/rooms/hot": {
+      "get": {
+        "tags": [
+          "Rooms (rooms.rec.net)"
+        ],
+        "summary": "\"Hot\" list: every public room in the catalog, most visited first.",
+        "parameters": [
+          {
+            "name": "skip",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 0
+            }
+          },
+          {
+            "name": "take",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 64
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/rooms/featured/current": {
+      "get": {
+        "tags": [
+          "Rooms (rooms.rec.net)"
+        ],
+        "summary": "Featured: the RRO (studio-made) rooms, then the rest.",
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/rooms/search": {
+      "get": {
+        "tags": [
+          "Rooms (rooms.rec.net)"
+        ],
+        "summary": "Text search over name, description and tags.",
+        "parameters": [
+          {
+            "name": "query",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "default": ""
+            }
+          },
+          {
+            "name": "skip",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 0
+            }
+          },
+          {
+            "name": "take",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 64
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/rooms/createdby/{accountId}": {
+      "get": {
+        "tags": [
+          "Rooms (rooms.rec.net)"
+        ],
+        "summary": "Rooms made by an account.",
+        "parameters": [
+          {
+            "name": "accountId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Room"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/rooms/createdby/me": {
+      "get": {
+        "tags": [
+          "Rooms (rooms.rec.net)"
+        ],
+        "summary": "The local player's own rooms (the dorm plus anything listed with their account as creator).",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Room"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/rooms/ownedby/me": {
+      "get": {
+        "tags": [
+          "Rooms (rooms.rec.net)"
+        ],
+        "summary": "The local player's own rooms (the dorm plus anything listed with their account as creator).",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Room"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/rooms/favoritedby/me": {
+      "get": {
+        "tags": [
+          "Rooms (rooms.rec.net)"
+        ],
+        "summary": "Rooms the local player favorited (kept in data/state).",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Room"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/rooms/visitedby/me": {
+      "get": {
+        "tags": [
+          "Rooms (rooms.rec.net)"
+        ],
+        "summary": "Rooms the local player visited, most recent first.",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Room"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/rooms/base": {
+      "get": {
+        "tags": [
+          "Rooms (rooms.rec.net)"
+        ],
+        "summary": "Studio \"base\" rooms new rooms are created from (the RRO entries of the catalog).",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Room"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/rooms/dorm": {
+      "get": {
+        "tags": [
+          "Rooms (rooms.rec.net)"
+        ],
+        "summary": "The local player's dorm room.",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Room"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/rooms/dorm/me": {
+      "get": {
+        "tags": [
+          "Rooms (rooms.rec.net)"
+        ],
+        "summary": "The local player's dorm room.",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Room"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/rooms/{id}/interactionby/me": {
+      "get": {
+        "tags": [
+          "Rooms (rooms.rec.net)"
+        ],
+        "summary": "Whether the local player cheered / favorited this room.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/rooms/{id}/cheer": {
+      "post": {
+        "tags": [
+          "Rooms (rooms.rec.net)"
+        ],
+        "summary": "Cheer (POST) or un-cheer (DELETE) a room.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Rooms (rooms.rec.net)"
+        ],
+        "summary": "Cheer (POST) or un-cheer (DELETE) a room.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/rooms/{id}/favorite": {
+      "post": {
+        "tags": [
+          "Rooms (rooms.rec.net)"
+        ],
+        "summary": "Favorite (POST) or un-favorite (DELETE) a room.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Rooms (rooms.rec.net)"
+        ],
+        "summary": "Favorite (POST) or un-favorite (DELETE) a room.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/rooms/{id}/subrooms": {
+      "get": {
+        "tags": [
+          "Rooms (rooms.rec.net)"
+        ],
+        "summary": "Sub-rooms of a room.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/SubRoom"
+                  }
+                }
+              }
+            }
           }
         }
       }
@@ -542,140 +2045,427 @@
         "additionalProperties": false,
         "description": "One request seen by the server (kept in memory and appended to requests.jsonl)."
       },
-      "NameServerResponse": {
+      "MatchmakingResponse": {
         "type": "object",
         "properties": {
-          "RecNetStatus": {
-            "type": "string",
-            "nullable": true
+          "errorCode": {
+            "type": "integer",
+            "description": "0 = success.",
+            "format": "int32"
           },
-          "AI": {
-            "type": "string",
-            "nullable": true
-          },
-          "Auth": {
-            "type": "string",
-            "nullable": true
-          },
-          "API": {
-            "type": "string",
-            "nullable": true
-          },
-          "WWW": {
-            "type": "string",
-            "nullable": true
-          },
-          "Notifications": {
-            "type": "string",
-            "nullable": true
-          },
-          "Images": {
-            "type": "string",
-            "nullable": true
-          },
-          "CDN": {
-            "type": "string",
-            "nullable": true
-          },
-          "Commerce": {
-            "type": "string",
-            "nullable": true
-          },
-          "Matchmaking": {
-            "type": "string",
-            "nullable": true
-          },
-          "Storage": {
-            "type": "string",
-            "nullable": true
-          },
-          "Chat": {
-            "type": "string",
-            "nullable": true
-          },
-          "Leaderboard": {
-            "type": "string",
-            "nullable": true
-          },
-          "Accounts": {
-            "type": "string",
-            "nullable": true
-          },
-          "Link": {
-            "type": "string",
-            "nullable": true
-          },
-          "Lists": {
-            "type": "string",
-            "nullable": true
-          },
-          "RoomComments": {
-            "type": "string",
-            "nullable": true
-          },
-          "Clubs": {
-            "type": "string",
-            "nullable": true
-          },
-          "Rooms": {
-            "type": "string",
-            "nullable": true
-          },
-          "PlatformNotifications": {
-            "type": "string",
-            "nullable": true
-          },
-          "Moderation": {
-            "type": "string",
-            "nullable": true
-          },
-          "DataCollection": {
-            "type": "string",
-            "nullable": true
-          },
-          "BugReporting": {
-            "type": "string",
-            "nullable": true
-          },
-          "Discovery": {
-            "type": "string",
-            "nullable": true
-          },
-          "PlayerSettings": {
-            "type": "string",
-            "nullable": true
-          },
-          "Studio": {
-            "type": "string",
-            "nullable": true
-          },
-          "GameLogs": {
-            "type": "string",
-            "nullable": true
-          },
-          "Strings": {
-            "type": "string",
-            "nullable": true
-          },
-          "Econ": {
-            "type": "string",
-            "nullable": true
-          },
-          "StringsCDN": {
-            "type": "string",
-            "nullable": true
-          },
-          "Data": {
-            "type": "string",
-            "nullable": true
-          },
-          "Cards": {
-            "type": "string",
-            "nullable": true
+          "roomInstance": {
+            "$ref": "#/components/schemas/RoomInstance"
           }
         },
         "additionalProperties": false,
-        "description": "What the name server (`ns.rec.net`) returns: the base URL of every other RecNet service.\nField names are those of the client's `RecNet.Core.NameServerResponse` class; the client deserialises them\ncase-sensitively, so do not rename."
+        "description": "match.rec.net `/goto/...` result."
+      },
+      "PlayerPresence": {
+        "type": "object",
+        "properties": {
+          "playerId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "statusVisibility": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "platform": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "deviceClass": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "vrMovementMode": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "roomInstance": {
+            "$ref": "#/components/schemas/RoomInstance"
+          },
+          "isOnline": {
+            "type": "boolean"
+          },
+          "appVersion": {
+            "type": "string",
+            "nullable": true
+          },
+          "lastOnline": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "additionalProperties": false,
+        "description": "Where a player is; match.rec.net `/player` and heartbeat responses."
+      },
+      "Room": {
+        "type": "object",
+        "properties": {
+          "RoomId": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "Name": {
+            "type": "string",
+            "nullable": true
+          },
+          "Description": {
+            "type": "string",
+            "nullable": true
+          },
+          "ImageName": {
+            "type": "string",
+            "nullable": true
+          },
+          "CreatorAccountId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "State": {
+            "type": "integer",
+            "description": "0 = active.",
+            "format": "int32"
+          },
+          "Accessibility": {
+            "type": "integer",
+            "description": "0 private, 1 public, 2 unlisted.",
+            "format": "int32"
+          },
+          "IsDorm": {
+            "type": "boolean"
+          },
+          "IsRRO": {
+            "type": "boolean",
+            "description": "Rec Room Original (made by the studio); built-in scenes."
+          },
+          "MaxPlayerCalculationMode": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "MaxPlayers": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "CloningAllowed": {
+            "type": "boolean"
+          },
+          "DisableMicAutoMute": {
+            "type": "boolean"
+          },
+          "DisableRoomComments": {
+            "type": "boolean"
+          },
+          "EncryptVoiceChat": {
+            "type": "boolean"
+          },
+          "LoadScreenLocked": {
+            "type": "boolean"
+          },
+          "SupportsLevelVoting": {
+            "type": "boolean"
+          },
+          "SupportsScreens": {
+            "type": "boolean"
+          },
+          "SupportsWalkVR": {
+            "type": "boolean"
+          },
+          "SupportsTeleportVR": {
+            "type": "boolean"
+          },
+          "SupportsVRLow": {
+            "type": "boolean"
+          },
+          "SupportsQuest2": {
+            "type": "boolean"
+          },
+          "SupportsMobile": {
+            "type": "boolean"
+          },
+          "SupportsJuniors": {
+            "type": "boolean"
+          },
+          "MinLevel": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "WarningMask": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "CustomWarning": {
+            "type": "string",
+            "nullable": true
+          },
+          "Version": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "PublishState": {
+            "type": "integer",
+            "description": "0 = published.",
+            "format": "int32"
+          },
+          "AgeRating": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "IsRecRoomApproved": {
+            "type": "boolean"
+          },
+          "ExcludeFromLists": {
+            "type": "boolean"
+          },
+          "ExcludeFromSearch": {
+            "type": "boolean"
+          },
+          "IsPlacePlay": {
+            "type": "boolean"
+          },
+          "IsDeveloperOwned": {
+            "type": "boolean"
+          },
+          "UgcVersion": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "PersistenceVersion": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "RankedEntityId": {
+            "type": "string",
+            "nullable": true
+          },
+          "CreatedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "PublishedAt": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "Stats": {
+            "$ref": "#/components/schemas/RoomStats"
+          },
+          "SubRooms": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SubRoom"
+            },
+            "nullable": true
+          },
+          "Roles": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/RoomRole"
+            },
+            "nullable": true
+          },
+          "Tags": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/RoomTag"
+            },
+            "nullable": true
+          },
+          "PromoImages": {
+            "type": "array",
+            "items": { },
+            "nullable": true
+          },
+          "PromoExternalContent": {
+            "type": "array",
+            "items": { },
+            "nullable": true
+          },
+          "LoadScreens": {
+            "type": "array",
+            "items": { },
+            "nullable": true
+          }
+        },
+        "additionalProperties": { }
+      },
+      "RoomInstance": {
+        "type": "object",
+        "properties": {
+          "roomInstanceId": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "roomId": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "subRoomId": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "roomInstanceType": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "location": {
+            "type": "string",
+            "description": "Unity scene GUID the client loads.",
+            "nullable": true
+          },
+          "dataBlob": {
+            "type": "string",
+            "nullable": true
+          },
+          "eventId": {
+            "type": "integer",
+            "format": "int64",
+            "nullable": true
+          },
+          "clubId": {
+            "type": "integer",
+            "format": "int64",
+            "nullable": true
+          },
+          "roomCode": {
+            "type": "string",
+            "nullable": true
+          },
+          "photonRegionId": {
+            "type": "string",
+            "nullable": true
+          },
+          "photonRoomId": {
+            "type": "string",
+            "nullable": true
+          },
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "maxCapacity": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "isFull": {
+            "type": "boolean"
+          },
+          "isPrivate": {
+            "type": "boolean"
+          },
+          "isInProgress": {
+            "type": "boolean"
+          }
+        },
+        "additionalProperties": false,
+        "description": "A running copy of a room the player is (or is going) in. Returned by match.rec.net (camelCase)."
+      },
+      "RoomRole": {
+        "type": "object",
+        "properties": {
+          "AccountId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "Role": {
+            "type": "integer",
+            "description": "255 = owner, 30 = co-owner, 20 = moderator, 10 = host? (values as seen in old API dumps).",
+            "format": "int32"
+          },
+          "LastChangedByAccountId": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "InvitedRole": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false
+      },
+      "RoomStats": {
+        "type": "object",
+        "properties": {
+          "CheerCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "FavoriteCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "VisitorCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "VisitCount": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false
+      },
+      "RoomTag": {
+        "type": "object",
+        "properties": {
+          "Tag": {
+            "type": "string",
+            "nullable": true
+          },
+          "Type": {
+            "type": "integer",
+            "description": "0 = user tag, 2 = auto/RRO tag.",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false
+      },
+      "SubRoom": {
+        "type": "object",
+        "properties": {
+          "SubRoomId": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "RoomId": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "Name": {
+            "type": "string",
+            "nullable": true
+          },
+          "UnitySceneId": {
+            "type": "string",
+            "description": "GUID of the Unity scene that hosts this sub-room. Build-specific: must match a scene in the game build.",
+            "nullable": true
+          },
+          "DataBlob": {
+            "type": "string",
+            "description": "Name of the saved room-state blob on cdn.rec.net (user-built rooms); empty for built-in scenes.",
+            "nullable": true
+          },
+          "DataSavedAt": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "IsSandbox": {
+            "type": "boolean"
+          },
+          "MaxPlayers": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "Accessibility": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": { }
       }
     }
   },
@@ -685,6 +2475,12 @@
     },
     {
       "name": "Auth (auth.rec.net)"
+    },
+    {
+      "name": "CDN (cdn.rec.net)"
+    },
+    {
+      "name": "Third-party: Unity cloud"
     },
     {
       "name": "Connectivity (google.com)"
@@ -699,10 +2495,19 @@
       "name": "GameConfigs (api.rec.net)"
     },
     {
-      "name": "NameServer (ns.rec.net)"
+      "name": "Images (img.rec.net)"
     },
     {
-      "name": "Third-party: Unity cloud"
+      "name": "Matchmaking (match.rec.net)"
+    },
+    {
+      "name": "NotificationHub (notifications.rec.net)"
+    },
+    {
+      "name": "Post-login batch"
+    },
+    {
+      "name": "Rooms (rooms.rec.net)"
     },
     {
       "name": "Third-party: RudderStack"

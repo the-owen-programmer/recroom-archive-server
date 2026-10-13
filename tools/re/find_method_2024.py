@@ -23,9 +23,10 @@ hdr = struct.unpack_from('<2I62I', md, 0)
 OFF = lambda k: hdr[2 + 2 * k]; SZ = lambda k: hdr[3 + 2 * k]
 cstr = lambda i: md[OFF(2) + i:md.index(b'\0', OFF(2) + i)].decode('utf8', 'replace')
 imgs = [struct.unpack_from('<10I', md, OFF(20) + i * 40) for i in range(SZ(20) // 40)]
-mods = {}
+mods = {}   # module list order differs from image order: match by module name
 for k in range(len(imgs)):
-    m = q(MODARR + 8 * k); mods[k] = m
+    m = q(MODARR + 8 * k)
+    mods[bytes(f[off(q(m)):off(q(m)) + 80]).split(b'\0')[0].decode()] = m
 for k, im in enumerate(imgs):
     for t in range(im[2], im[2] + im[3]):
         td = struct.unpack_from('<16I8H2I', md, OFF(19) + t * 88)
@@ -37,6 +38,6 @@ for k, im in enumerate(imgs):
             nm = cstr(mm[0])
             if not mre.search(nm): continue
             rid = (mm[5] & 0xFFFFFF) - 1
-            mod = mods[k]; cnt, ptrs = u32(mod + 8), q(mod + 16)
+            mod = mods[cstr(im[0])]; cnt, ptrs = u32(mod + 8), q(mod + 16)
             va = q(ptrs + 8 * rid) if rid < cnt else 0
             print(f'{cstr(im[0])}: {cname}.{nm}  params={mm[9]}  VA {va:#x}' + (f'  off {off(va):#x}  {f[off(va):off(va)+12].hex(" ")}' if va else ''))

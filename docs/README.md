@@ -52,5 +52,11 @@ Verified from the live client log, in order: `GET auth.rec.net/cachedlogin/forpl
 - **Current blocker (client side): `wrapper`.** The EAC native wrapper is unavailable ("EAC runtime inactive"). `EACManager.GenerateChallengeResponse(string)` is at VA `0x187ee60a0` (file offset `0x7ee50a0`) and `EasyAntiCheat.Client.dll` `ClientAuth.WriteChallengeResponse` is a native icall. Needs a client patch (stub the EAC challenge-response step) or a stand-in for the EAC native library, plus a server that ignores the response. Helper: `tools/re/find_method_2024.py <GameAssembly.dll> <meta> <method regex> [class regex]`.
 - Also pending: `img.rec.net/DefaultProfileImage?width=512&sig=p1` returns 404 (world-layer image serving).
 
+## EAC step and connect/token (2026-10-13)
+- **Client patches (apply to a COPY of GameAssembly.dll; each checks the old bytes first):** file offset `0x6735270` `48 89 5c 24` -> `b0 01 c3` (TLS verifier returns true); `0x7091e21` `74 3a` -> `90 90` and `0x7091e2f` `e8 ..` (5-byte call) -> `90 90 90 90 90` (`EACManager.GenerateChallengeResponse` returns base64 of an empty 128-byte response instead of null when the EAC client does not exist; the null was login error `wrapper`). 10 bytes in total differ from the original. Verified: the client then sends the challenge response and moves on.
+- **Verified request** (live client): `POST auth.rec.net/connect/token`, `application/x-www-form-urlencoded`, fields `grant_type=cached_login`, `account_id`, `client_id`, `client_secret` and `build_key` (client constants), `platform`, `platform_id`, `device_id`, `device_class`, `time`, `ver`, `cid`, `asid`, `locale`, `isInitialLogin`, `dinfo`, `eac_challenge`, `eac_response`, `platform_auth` (JSON with the fake Steam ticket). No Authorization header.
+- 404 there gave "Unable to login (code: 3)" and the game quits ~2 s later (looks like a crash, is not).
+- Implemented: standard OAuth response with an HS256 JWT (`TokenService`); the shape of the response is a guess until the client's reaction is seen.
+
 ## World layer
 Rooms, matchmaking, archived content (img/cdn), archive importers and the override folder: see `docs/worlds.md`.
