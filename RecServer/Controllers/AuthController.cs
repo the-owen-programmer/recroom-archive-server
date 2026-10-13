@@ -25,4 +25,11 @@ public class AuthController : ControllerBase
     [HttpGet("/cachedlogin/current")]
     [Produces("application/json")]
     public object[] Current() => [LocalPlayer.CachedLogin(0, "76561198000000001")];
+
+    /// <summary>Easy Anti-Cheat handshake: the client asks for a challenge before logging in.</summary>
+    /// <remarks>Shape is a guess (an object with a <c>Challenge</c> string; the client has a <c>Challenge</c> property). EAC is not
+    /// running in the archive build ("EAC runtime inactive"), so any value is fine and the answer is never checked.</remarks>
+    [HttpGet("/eac/challenge")]
+    [Produces("application/json")]
+    public object EacChallenge() => new { Challenge = Convert.ToBase64String(new byte[32]) };
 }

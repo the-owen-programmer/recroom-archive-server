@@ -6,6 +6,77 @@
     "version": "v1"
   },
   "paths": {
+    "/account/bulk": {
+      "get": {
+        "tags": [
+          "Accounts (accounts.rec.net)"
+        ],
+        "summary": "Several accounts by id, query `?id=1&id=2`. Unknown ids are skipped.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "query",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "integer",
+                "format": "int32"
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/account/me": {
+      "get": {
+        "tags": [
+          "Accounts (accounts.rec.net)"
+        ],
+        "summary": "The logged-in account.",
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/account/{id}": {
+      "get": {
+        "tags": [
+          "Accounts (accounts.rec.net)"
+        ],
+        "summary": "One account by id.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
     "/cachedlogin/forplatformid/{platform}/{platformId}": {
       "get": {
         "tags": [
@@ -595,6 +666,9 @@
     }
   },
   "tags": [
+    {
+      "name": "Accounts (accounts.rec.net)"
+    },
     {
       "name": "Auth (auth.rec.net)"
     },
