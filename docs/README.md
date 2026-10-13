@@ -1,4 +1,4 @@
-# RecServer: local fake RecNet backend for the 2024-08-20 build
+# RecServer: local fake backend for the 2024-08-20 build
 
 Code: `RecServer/` (ASP.NET, net10.0). Runner: `run-in-netns.sh [seconds] [wineprefix]` (private user+net namespace, wildcard DNS to 127.0.0.1, per-host certificates from a local test CA, port 443). Env: `HEADLESS=1` (Xvfb), `REC_LOGLEVEL=Debug` (TLS alerts), `BUILD=` (game dir). Logs in `logs/` (`requests.jsonl`, `dns.log`, `server.out`, `game-wine.out`); game log is the Wine prefix's `Player.log`. Setup: `wineboot -u` into `work/wineprefix`, then `tools/trust_ca_in_wine.py <prefix> certs/ca.pem`. Needs the ASP.NET runtime in `server/.dotnet/root` or system dotnet.
 
@@ -16,3 +16,11 @@ Scope: local, offline archival only. This server is research scaffolding; the en
 1. Neutralise that verifier in the 2024 build. Preferred: load MelonLoader (Rec-Room-Patches already does this for these builds) or BepInEx IL2CPP and patch `IsValid` to return true. Check first that the scrambled-header metadata of the 2024 build works with Il2CppInterop.
 2. Then read `requests.jsonl` for the real `ns.rec.net` path and fix `NameServerResponse`, and follow the chain (auth, config, accounts, rooms, Photon) one failure at a time.
 3. Port what the server learns into the in-process mod.
+
+## Mod loader attempt: MelonLoader 0.7.3 on the 2024 build (2026-10-13)
+- Setup: `builds/2024-08-20-mod/` = hardlinked copy of `builds/2024-08-20/` plus MelonLoader x64 (`version.dll` proxy; run with `WINEDLLOVERRIDES="version=n,b;mscoree,mshtml=d"`). Original build untouched. Scratch: `work/melonloader/`, `work/melon_boot*.out`.
+- Result: **works up to IL2CPP init, then fails.** Under Wine, MelonLoader downloads/installs its own .NET 6 runtime, starts, hooks `il2cpp_init` / `il2cpp_runtime_invoke`, loads 0 plugins, then the game shows "failed to initialize il2cpp" and never starts (Unity `Player.log` stays empty). Likely cause: the scrambled `global-metadata.dat` / patched IL2CPP loader of this build (the loader's Cpp2IL/Il2CppInterop step expects standard metadata). Not confirmed.
+- Common prerequisite for both routes (loader and static patch of `IsValid`): understand the 2024 metadata layout. `tools/unscramble_metadata.py` is Android-only (hardcoded section order; fails its count check on the 2024 file).
+
+## 2024 metadata layout solved (2026-10-13)
+`tools/re/unscramble_metadata_2024.py` rebuilds a standard v29 `global-metadata.dat` header for the 20 Aug 2024 build (29 sections chained from byte 256; section order derived by content; method defs are 32 bytes). Il2CppDumper 6.7.46 accepts the result ("Metadata Version: 29", 49,794 type definitions). Status: **work in progress, dumping not finished** - the dumper cannot auto-find the registration tables in this stripped `GameAssembly.dll`, so `tools/re/pe_findreg.py` finds them by hand: MetadataRegistration at VA `0x189dd3ad0` (types 152,820). CodeRegistration still to locate (the 355 code-gen module pointers follow the typeDefinitionsSizes array).
