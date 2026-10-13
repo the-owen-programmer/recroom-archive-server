@@ -6,6 +6,88 @@
     "version": "v1"
   },
   "paths": {
+    "/cachedlogin/forplatformid/{platform}/{platformId}": {
+      "get": {
+        "tags": [
+          "Auth (auth.rec.net)"
+        ],
+        "summary": "Cached logins for one platform account (platform 0 = Steam). The local player is returned for any id,\n            so the fake Steam ticket never has to be verified.",
+        "parameters": [
+          {
+            "name": "platform",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "platformId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/cachedlogin/forplatformids": {
+      "get": {
+        "tags": [
+          "Auth (auth.rec.net)"
+        ],
+        "summary": "Cached logins for several platform ids at once.",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/cachedlogin/current": {
+      "get": {
+        "tags": [
+          "Auth (auth.rec.net)"
+        ],
+        "summary": "The cached login of the current device.",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/generate_204": {
       "get": {
         "tags": [
@@ -120,6 +202,27 @@
                   "items": {
                     "$ref": "#/components/schemas/LoggedRequest"
                   }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/avatar/v1/defaultunlocked": {
+      "get": {
+        "tags": [
+          "Econ (econ.rec.net)"
+        ],
+        "summary": "Avatar items every player owns by default. Empty for now (the client keeps its built-in defaults).",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { }
                 }
               }
             }
@@ -493,10 +596,16 @@
   },
   "tags": [
     {
+      "name": "Auth (auth.rec.net)"
+    },
+    {
       "name": "Connectivity (google.com)"
     },
     {
       "name": "Debug"
+    },
+    {
+      "name": "Econ (econ.rec.net)"
     },
     {
       "name": "GameConfigs (api.rec.net)"
