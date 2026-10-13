@@ -42,7 +42,8 @@ public class PostLoginController : ControllerBase
     public object[] PlayerSettings() => None;
 
     [Host("api.rec.net")][HttpGet("/outfits/me")]
-    public object[] Outfits() => None;
+    public object Outfits() => new { Outfits = None };   // an object is required (a bare list is "malformed"); key verified by trial
+
 
     [Host("econ.rec.net")][HttpGet("/api/avatar/v4/items")]
     public object[] AvatarItems() => None;
@@ -124,4 +125,12 @@ public class PostLoginController : ControllerBase
     /// <summary>Feature-flag user properties upload. Accepted and ignored.</summary>
     [Host("api.rec.net")][HttpPost("/statsigUserProperties")]
     public IActionResult StatsigUserProperties() => Ok();
+
+    /// <summary>"Is another device logged in?" check with a login lock. Always granted (single local player).</summary>
+    [Host("match.rec.net")][HttpPost("/player/exclusivelogin")]
+    public object ExclusiveLogin() => MatchLogin();   // response shape is a guess: same presence-style body as player/login
+
+    /// <summary>Email prompt of the account setup flow (the player may answer "no thanks"). Accepted and ignored.</summary>
+    [Host("accounts.rec.net")][HttpPost("/account/me/email")]
+    public object SetEmail() => new { Success = true };
 }
