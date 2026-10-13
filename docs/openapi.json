@@ -1186,6 +1186,85 @@
         }
       }
     },
+    "/api/relationships/v2/get": {
+      "get": {
+        "tags": [
+          "Post-login batch"
+        ],
+        "summary": "Friends / blocked / muted list of the local player. Nobody.",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": { }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/econ/customAvatarItems/v1/owned": {
+      "get": {
+        "tags": [
+          "Post-login batch"
+        ],
+        "summary": "Custom avatar items owned (paged by skip/take). None.",
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/thread": {
+      "get": {
+        "tags": [
+          "Post-login batch"
+        ],
+        "summary": "Chat threads (direct messages). None.",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": { }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/rooms/{id}": {
       "get": {
         "tags": [

@@ -106,4 +106,15 @@ public class PostLoginController : ControllerBase
     /// <summary>Chat threads (direct messages). None.</summary>
     [Host("chat.rec.net")][HttpGet("/thread")]
     public object[] ChatThreads() => None;
+
+    /// <summary>Storefront contents (type 3 = gift drops). Nothing for sale; shape is a guess.</summary>
+    [Host("econ.rec.net")][HttpGet("/api/storefronts/v3/giftdropstore/{id:int}")]
+    public object GiftDropStore(int id) => new { StorefrontType = id, StoreItems = None, NextUpdate = (string?)null };
+
+    [Host("chat.rec.net")][HttpGet("/thread/party")]
+    public object[] PartyThreads() => None;
+
+    /// <summary>Feature-flag user properties upload. Accepted and ignored.</summary>
+    [Host("api.rec.net")][HttpPost("/statsigUserProperties")]
+    public IActionResult StatsigUserProperties() => Ok();
 }
