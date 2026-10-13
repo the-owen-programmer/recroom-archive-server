@@ -1,0 +1,24 @@
+[
+  {
+    "RoomId": 1,
+    "Name": "DormRoom",
+    "Description": "Your private room.",
+    "ImageName": "DefaultRoomImage.jpg",
+    "IsDorm": true,
+    "IsRRO": true,
+    "Accessibility": 0,
+    "MaxPlayers": 4,
+    "SubRooms": [ { "SubRoomId": 11, "Name": "Home", "UnitySceneId": "76d98498-60a1-430c-ab76-b54a29b7a163", "MaxPlayers": 4, "Accessibility": 0 } ],
+    "Tags": [ { "Tag": "rro", "Type": 2 } ]
+  },
+  {
+    "RoomId": 2,
+    "Name": "RecCenter",
+    "Description": "The Rec Center.",
+    "ImageName": "DefaultRoomImage.jpg",
+    "IsRRO": true,
+    "MaxPlayers": 20,
+    "SubRooms": [ { "SubRoomId": 21, "Name": "Home", "UnitySceneId": "cbad71af-0831-44d8-b8ef-69edafa841f6" } ],
+    "Tags": [ { "Tag": "rro", "Type": 2 } ]
+  }
+]
