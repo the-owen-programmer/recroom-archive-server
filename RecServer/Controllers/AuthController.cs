@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Routing;
 using RecServer.Models;
+using RecServer.Services;
 
 namespace RecServer.Controllers;
 
@@ -34,4 +35,27 @@ public class AuthController : ControllerBase
     /// </remarks>
     [HttpGet("/eac/challenge")]
     public IActionResult EacChallenge() => Content("\"" + Convert.ToBase64String(new byte[16]) + "\"", "application/json");
+
+    private static readonly string[] Scopes =
+        ["offline_access", "rn", "rn.accounts", "rn.api", "rn.chat", "rn.clubs", "rn.commerce", "rn.match.read", "rn.match.write",
+         "rn.notify", "rn.rooms", "rn.storage", "rn.ai"];
+
+    /// <summary>OAuth token endpoint. The client posts form fields: <c>grant_type=cached_login</c>, <c>account_id</c>, <c>platform</c>,
+    /// <c>platform_id</c>, <c>device_id</c>, <c>eac_challenge</c>, <c>eac_response</c>, <c>platform_auth</c> (JSON with the Steam ticket), and
+    /// built-in client constants. None of it is verified: the local player is always accepted.</summary>
+    /// <remarks>Response is the standard OAuth shape (a guess; to be corrected from the client's behaviour).</remarks>
+    [HttpPost("/connect/token")]
+    [Produces("application/json")]
+    public object Token()
+    {
+        int accountId = int.TryParse(Request.HasFormContentType ? Request.Form["account_id"].ToString() : "", out var a) ? a : LocalPlayer.AccountId;
+        return new
+        {
+            access_token = TokenService.AccessToken(accountId, 3600, Scopes),
+            expires_in = 3600,
+            token_type = "Bearer",
+            refresh_token = LocalPlayer.RefreshToken,
+            scope = string.Join(' ', Scopes),
+        };
+    }
 }
