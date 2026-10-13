@@ -84,4 +84,14 @@ public class PostLoginController : ControllerBase
 
     [Host("match.rec.net")][HttpGet("/player/qos")]
     public object Qos() => new { };
+
+    [Host("econ.rec.net")][HttpGet("/api/avatar/v1/defaultbaseavataritems")]
+    public object[] DefaultBaseAvatarItems() => None;
+
+    [Host("clubs.rec.net")][HttpGet("/subscription/details/{id:int}")]
+    public object ClubSubscriptionDetails(int id) => new { };
+
+    /// <summary>Player settings upload (the client PUTs the whole settings list). Accepted and ignored.</summary>
+    [Host("playersettings.rec.net")][HttpPut("/playersettings")]
+    public IActionResult PutPlayerSettings() => Ok();
 }

@@ -749,6 +749,365 @@
         }
       }
     },
+    "/api/customAvatarItems/v1/isCreationAllowedForAccount": {
+      "get": {
+        "tags": [
+          "Post-login batch"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "boolean"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "boolean"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "boolean"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/PlayerReporting/v1/moderationBlockDetails": {
+      "post": {
+        "tags": [
+          "Post-login batch"
+        ],
+        "summary": "Moderation: is this account currently blocked/banned? Zeroed = no.",
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/PlayerReporting/v1/hile": {
+      "post": {
+        "tags": [
+          "Post-login batch"
+        ],
+        "summary": "Cheat/anti-tamper report from the client (e.g. \"Signature missing\" for an image). Accepted and ignored.",
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/hub/v1/negotiate": {
+      "post": {
+        "tags": [
+          "Post-login batch"
+        ],
+        "summary": "SignalR negotiate for the notification hub. The hub itself (websocket) is not implemented yet.",
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/playersettings": {
+      "get": {
+        "tags": [
+          "Post-login batch"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": { }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/outfits/me": {
+      "get": {
+        "tags": [
+          "Post-login batch"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": { }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/avatar/v4/items": {
+      "get": {
+        "tags": [
+          "Post-login batch"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": { }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/data/event": {
+      "post": {
+        "tags": [
+          "Post-login batch"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/players/v2/progression/bulk": {
+      "get": {
+        "tags": [
+          "Post-login batch"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "query",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "integer",
+                "format": "int32"
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": { }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/playerReputation/v2/bulk": {
+      "get": {
+        "tags": [
+          "Post-login batch"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "query",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "integer",
+                "format": "int32"
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": { }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/crm/me/config/v2": {
+      "get": {
+        "tags": [
+          "Post-login batch"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/subscription/mine/member": {
+      "get": {
+        "tags": [
+          "Post-login batch"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": { }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/player/login": {
+      "post": {
+        "tags": [
+          "Post-login batch"
+        ],
+        "summary": "Matchmaking presence: the client announces itself with a login lock after sign-in.",
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/player/logout": {
+      "post": {
+        "tags": [
+          "Post-login batch"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/player/connection-info": {
+      "get": {
+        "tags": [
+          "Post-login batch"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/player/qos": {
+      "get": {
+        "tags": [
+          "Post-login batch"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
     "/rooms/{id}": {
       "get": {
         "tags": [
@@ -1931,6 +2290,9 @@
     },
     {
       "name": "Matchmaking (match.rec.net)"
+    },
+    {
+      "name": "Post-login batch"
     },
     {
       "name": "Rooms (rooms.rec.net)"
