@@ -16,7 +16,7 @@ public class PostLoginController : ControllerBase
     private static readonly object[] None = [];
 
     [Host("api.rec.net")][HttpGet("/api/customAvatarItems/v1/isCreationAllowedForAccount")]
-    public bool CustomAvatarItemsAllowed() => true;
+    public object CustomAvatarItemsAllowed() => new { IsAllowed = true };
 
     /// <summary>Moderation: is this account currently blocked/banned? Zeroed = no.</summary>
     [Host("api.rec.net")][HttpPost("/api/PlayerReporting/v1/moderationBlockDetails")]
@@ -63,7 +63,7 @@ public class PostLoginController : ControllerBase
         }).ToArray();
 
     [Host("platformnotifications.rec.net")][HttpGet("/crm/me/config/v2")]
-    public object CrmConfig() => new { };
+    public object CrmConfig() => new { Enabled = false };   // an empty object is rejected as malformed
 
     [Host("clubs.rec.net")][HttpGet("/subscription/mine/member")]
     public object[] ClubSubscriptions() => None;
@@ -80,7 +80,11 @@ public class PostLoginController : ControllerBase
     public IActionResult MatchLogout() => Ok();
 
     [Host("match.rec.net")][HttpGet("/player/connection-info")]
-    public object ConnectionInfo() => new { };
+    public object ConnectionInfo() => new   // client type ServerConnectionInfoDTO; an empty object is rejected as malformed
+    {
+        PhotonAuthToken = "", PhotonRealtimeAppId = "", PhotonVoiceAppId = "", PhotonChatAppId = "", PhotonRegion = "us",
+        PhotonRoomId = "", VoiceConnectionInfo = "", VoiceServerId = "", Experiments = new { },
+    };
 
     [Host("match.rec.net")][HttpGet("/player/qos")]
     public object Qos() => new { };

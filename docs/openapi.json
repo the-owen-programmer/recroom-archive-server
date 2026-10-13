@@ -1265,6 +1265,75 @@
         }
       }
     },
+    "/api/storefronts/v3/giftdropstore/{id}": {
+      "get": {
+        "tags": [
+          "Post-login batch"
+        ],
+        "summary": "Storefront contents (type 3 = gift drops). Nothing for sale; shape is a guess.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/thread/party": {
+      "get": {
+        "tags": [
+          "Post-login batch"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": { }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/statsigUserProperties": {
+      "post": {
+        "tags": [
+          "Post-login batch"
+        ],
+        "summary": "Feature-flag user properties upload. Accepted and ignored.",
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
     "/rooms/{id}": {
       "get": {
         "tags": [
