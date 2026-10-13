@@ -27,9 +27,11 @@ public class AuthController : ControllerBase
     public object[] Current() => [LocalPlayer.CachedLogin(0, "76561198000000001")];
 
     /// <summary>Easy Anti-Cheat handshake: the client asks for a challenge before logging in.</summary>
-    /// <remarks>Shape is a guess (an object with a <c>Challenge</c> string; the client has a <c>Challenge</c> property). EAC is not
-    /// running in the archive build ("EAC runtime inactive"), so any value is fine and the answer is never checked.</remarks>
+    /// <remarks>
+    /// Verified shape: a bare JSON string (<c>"AAAAAAAAAAAAAAAAAAAAAA=="</c>). An object (<c>{"Challenge":..}</c>, <c>{"challenge":..}</c>)
+    /// gives "Malformed Response" and login error code <c>challenge</c>; the bare string moves the failure on to code <c>wrapper</c>
+    /// (the EAC native wrapper, which is not available in the archive build: "EAC runtime inactive").
+    /// </remarks>
     [HttpGet("/eac/challenge")]
-    [Produces("application/json")]
-    public object EacChallenge() => new { Challenge = Convert.ToBase64String(new byte[32]) };
+    public IActionResult EacChallenge() => Content("\"" + Convert.ToBase64String(new byte[16]) + "\"", "application/json");
 }

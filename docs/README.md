@@ -45,3 +45,9 @@ Plan: no Steam client needed, so anyone can view worlds offline. The game uses S
 - The Steam stand-in DLL works: "Platform: Steam" passes and the fake SteamID is sent on (`/cachedlogin/forplatformid/0/76561198000000001`; platform 0 = Steam).
 - Test tip: never start a second run while one is still going (shared logs/Wine prefix give misleading results); don't `pkill -f` a pattern that appears in your own command line.
 - Next requests: `GET auth.rec.net/cachedlogin/forplatformid/0/<steamid>` (404 -> "Unable to login (code: block)") and `GET econ.rec.net/api/avatar/v1/defaultunlocked` (404).
+
+## Login chain (2026-10-13)
+Verified from the live client log, in order: `GET auth.rec.net/cachedlogin/forplatformid/0/<steamid>` (list of `{platform, platformId, accountId, lastLoginTime, requirePassword, refreshToken, account}`), `GET accounts.rec.net/account/bulk?id=1` (list of accounts), `GET econ.rec.net/api/avatar/v1/defaultunlocked` (`[]`), `GET auth.rec.net/eac/challenge`.
+- **eac/challenge shape:** a bare JSON string. Objects give "Malformed Response" / login error code `challenge`; the bare string moves the failure to code **`wrapper`**.
+- **Current blocker (client side): `wrapper`.** The EAC native wrapper is unavailable ("EAC runtime inactive"). `EACManager.GenerateChallengeResponse(string)` is at VA `0x187ee60a0` (file offset `0x7ee50a0`) and `EasyAntiCheat.Client.dll` `ClientAuth.WriteChallengeResponse` is a native icall. Needs a client patch (stub the EAC challenge-response step) or a stand-in for the EAC native library, plus a server that ignores the response. Helper: `tools/re/find_method_2024.py <GameAssembly.dll> <meta> <method regex> [class regex]`.
+- Also pending: `img.rec.net/DefaultProfileImage?width=512&sig=p1` returns 404 (world-layer image serving).

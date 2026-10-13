@@ -159,6 +159,20 @@
         }
       }
     },
+    "/eac/challenge": {
+      "get": {
+        "tags": [
+          "Auth (auth.rec.net)"
+        ],
+        "summary": "Easy Anti-Cheat handshake: the client asks for a challenge before logging in.",
+        "description": "EXPERIMENT: the response shape is unknown (\"Malformed Response\" for {\"Challenge\":\"...\"}), so each request gets the next\n            candidate shape; the server log shows which one was sent. EAC is not running in the archive build (\"EAC runtime inactive\").",
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
     "/generate_204": {
       "get": {
         "tags": [
