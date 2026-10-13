@@ -36,3 +36,6 @@ New problem: the client then fails the boot sequence with the RecNetStatus URL a
 
 ## gameconfigs/v1/all answered (2026-10-13)
 `GET api.rec.net/api/gameconfigs/v1/all` returns `[]` (client type `RecNet.GameConfig`: Key, Value, ActiveExperiments, StartTime, EndTime; empty = compiled-in defaults) and the client accepts it. Next blocker is **not the server**: "Failed to initialize Steam Platform" (the build wants a running Steam client). Need a non-Steam platform path or a Steamworks stand-in.
+
+## Fake Steam (2026-10-13)
+Plan: no Steam client needed, so anyone can view worlds offline. The game uses Steamworks.NET (P/Invoke into `steam_api64.dll`), and "Failed to initialize Steam Platform" came from `SteamAPI_Init` failing under Wine. `tools/steamstub/gen.py` + `exports.txt` (the 995 exports of Valve's DLL) generate a stand-in DLL: init succeeds, interface accessors return a dummy object, fixed fake SteamID `76561198000000001`, 32-byte dummy auth ticket, everything else returns 0. Build: `python3 gen.py > stub.c && x86_64-w64-mingw32-gcc -shared -O1 -o steam_api64.dll stub.c -static-libgcc -Wl,--kill-at`, then drop it over `RecRoom_Data/Plugins/x86_64/steam_api64.dll` in a COPY of the build. The local server is meant to accept the fake ticket without authenticating it. Status: first test run in progress.
