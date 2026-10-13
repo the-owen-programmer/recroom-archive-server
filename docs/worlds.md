@@ -95,5 +95,33 @@ per path.
    and `include` flags it requests.
 2. ~~Scene GUIDs of the built-in rooms~~: done, see above. Still open: whether the client wants the room/sub-room GUIDs anywhere.
 3. How a `.room` blob is fetched: the full cdn path, and whether it is compressed or versioned (`UgcVersion`, `PersistenceVersion`).
-4. **Photon.** Entering an instance means joining a Photon room. Offline, that needs either a local Photon-compatible server or
-   a client patch for Photon offline mode. This is the next big blocker after matchmaking.
+4. ~~Photon~~: a single-player stand-in now runs inside RecServer, see below.
+
+## Photon stand-in (single player)
+Entering a room instance means joining a Photon room (the client uses PUN 2 on Photon Realtime). RecServer runs a minimal
+**single-player** Photon server in-process (`RecServer/Photon/`), on by default (`REC_PHOTON=0` turns it off):
+
+| UDP port | Role | What it does |
+|---|---|---|
+| 5058 (+27000) | name server | key exchange, region list (`usw,us,eu`, `REC_PHOTON_REGIONS`), authenticate → master address |
+| 5055 (+27001) | master | authenticate, lobby, create/join/join-random → game server address; also echoes region pings |
+| 5056 (+27002) | game | create/join → local player is **actor 1 and master client**; RaiseEvent comes back when addressed to all, the master client or actor 1 (nothing is sent for "others"); Set/GetProperties stored and echoed as PropertiesChanged; Leave |
+
+Anything else gets an empty OK and a log line. The log is `logs/photon.log`, one line per operation with its parameters.
+Addresses handed out are `REC_PHOTON_HOST` (default `127.0.0.1`) plus the port. The name server host the client dials
+(`ns.exitgames.com`) resolves to 127.0.0.1 through the netns wildcard DNS.
+
+What it implements of the wire protocol: Photon reliable UDP (connect/verify, per-channel ordered reliable delivery, acks,
+fragments both ways, resends, ping and server-time commands), GpBinaryV18 serialization, and the payload-encryption key exchange
+(DH Oakley-768, AES-256-CBC) that the client runs before authenticating. Custom types and other values the server doesn't need
+are kept as raw bytes and sent back unchanged. Not implemented: GpBinaryV16, datagram encryption, TCP/WebSocket transports,
+Photon Voice and Chat (the game may connect to those too; their requests will show in the log).
+
+Verified with the real Photon client library (PUN 2's Photon3Unity3D 4.1.2.19 and its LoadBalancingClient, in a local test
+harness, not committed): fixed-region and region-ping connects, encrypted name-server auth, master → game, actor 1 / master
+client, player and room properties, events with object arrays and a 5,000-byte fragmented payload, and "Others" events dropped.
+The 2024 game's own copy of the library is newer and untested against this server.
+
+PhotonServerSettings in the 2024 build: Realtime AppId `9372aa8d-d3f4-44a0-986d-419e145a2b83`, Chat/Voice AppId
+`e93ae440-f238-4b6c-848f-1df89faf14f5`, UseNameServer, FixedRegion `usw`, UDP. The client may also take AppIds and region
+from `match.rec.net/player/connection-info` (boot layer); the stand-in accepts any AppId and region.

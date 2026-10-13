@@ -56,6 +56,26 @@ builder.Services.AddSwaggerGen(c =>
 });
 
 var app = builder.Build();
+
+// Single-player Photon stand-in (UDP name/master/game servers) so the client can "join" room instances offline.
+if (Environment.GetEnvironmentVariable("REC_PHOTON") != "0")
+{
+    var photonLog = Path.Combine(logDir, "photon.log");
+    var photonLock = new object();
+    void PhotonLog(string line)
+    {
+        line = $"{DateTime.Now:HH:mm:ss.fff} [photon] {line}";
+        Console.WriteLine(line);
+        lock (photonLock) File.AppendAllText(photonLog, line + "\n");
+    }
+    int PortVar(string name, int fallback) => int.TryParse(Environment.GetEnvironmentVariable(name), out var v) ? v : fallback;
+    var photon = new RecServer.Photon.PhotonStandIn(
+        Environment.GetEnvironmentVariable("REC_PHOTON_HOST") ?? "127.0.0.1",
+        PortVar("REC_PHOTON_NS_PORT", 5058), PortVar("REC_PHOTON_MASTER_PORT", 5055), PortVar("REC_PHOTON_GAME_PORT", 5056),
+        (Environment.GetEnvironmentVariable("REC_PHOTON_REGIONS") ?? "usw,us,eu").Split(','), PhotonLog);
+    photon.Start();
+    app.Lifetime.ApplicationStopping.Register(photon.Dispose);
+}
 app.UseMiddleware<RequestLogMiddleware>();
 app.UseWebSockets();
 app.UseMiddleware<OverrideMiddleware>();   // data/overrides/<host>/<path>.json wins over everything below
