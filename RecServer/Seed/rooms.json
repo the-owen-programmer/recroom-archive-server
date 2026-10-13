@@ -1,20 +1,43 @@
 [
   {
-    "RoomId": 9000000000000000001,
-    "Name": "DormRoom",
-    "Description": "Your private room.",
+    "RoomId": 9000000000000000100,
+    "Name": "Calibration",
+    "Description": "PSVR Room Calibration",
     "ImageName": "DefaultRoomImage.jpg",
-    "IsDorm": true,
     "IsRRO": true,
+    "IsDorm": false,
+    "Accessibility": 0,
+    "MaxPlayers": 20,
+    "SubRooms": [
+      {
+        "Name": "Home",
+        "UnitySceneId": "f5fbd9c9-e853-4036-9d48-5f68e861af04",
+        "_SubRoomGuid": "fe66923e-4034-4ec4-4bca-11a973bf5515"
+      }
+    ],
+    "Tags": [
+      {
+        "Tag": "rro",
+        "Type": 2
+      }
+    ],
+    "_RoomGuid": "30040e05-b7b9-9f44-eb08-b9f154d2ecfc",
+    "_IdSource": "synthetic"
+  },
+  {
+    "RoomId": 9000000000000000101,
+    "Name": "DormRoom",
+    "Description": "Dorm Room",
+    "ImageName": "DefaultRoomImage.jpg",
+    "IsRRO": true,
+    "IsDorm": true,
     "Accessibility": 0,
     "MaxPlayers": 4,
     "SubRooms": [
       {
-        "SubRoomId": 9000000000000000011,
         "Name": "Home",
         "UnitySceneId": "76d98498-60a1-430c-ab76-b54a29b7a163",
-        "MaxPlayers": 4,
-        "Accessibility": 0
+        "_SubRoomGuid": "92084aee-1f44-a3b4-18f1-375601606506"
       }
     ],
     "Tags": [
@@ -22,20 +45,24 @@
         "Tag": "rro",
         "Type": 2
       }
-    ]
+    ],
+    "_RoomGuid": "68251132-5662-5c34-08b1-4a830a27955b",
+    "_IdSource": "synthetic"
   },
   {
     "RoomId": 170126,
     "Name": "RecCenter",
-    "Description": "The Rec Center. Seed entry; import the archived room (tools/import_rooms.py wayback --name RecCenter) for the real metadata and thumbnail.",
+    "Description": "Rec Center",
     "ImageName": "DefaultRoomImage.jpg",
     "IsRRO": true,
+    "IsDorm": false,
+    "Accessibility": 1,
     "MaxPlayers": 20,
     "SubRooms": [
       {
-        "SubRoomId": 1701261,
         "Name": "Home",
-        "UnitySceneId": "cbad71af-0831-44d8-b8ef-69edafa841f6"
+        "UnitySceneId": "cbad71af-0831-44d8-b8ef-69edafa841f6",
+        "_SubRoomGuid": "6016e455-652d-54d4-3838-ecc6c9aa4ca8"
       }
     ],
     "Tags": [
@@ -43,6 +70,1393 @@
         "Tag": "rro",
         "Type": 2
       }
-    ]
+    ],
+    "_RoomGuid": "02ed2947-2db9-62c4-49b0-76d70fd432bb",
+    "_IdSource": "archive"
+  },
+  {
+    "RoomId": 9000000000000000103,
+    "Name": "3DCharades",
+    "Description": "Charades The Ink Space",
+    "ImageName": "DefaultRoomImage.jpg",
+    "IsRRO": true,
+    "IsDorm": false,
+    "Accessibility": 1,
+    "MaxPlayers": 20,
+    "SubRooms": [
+      {
+        "Name": "InkSpaceHome",
+        "UnitySceneId": "a673712c-877f-4749-b69a-4a4c6310d545",
+        "_SubRoomGuid": "6881a3ce-1696-4c76-a3a0-4432892c64a7"
+      }
+    ],
+    "Tags": [
+      {
+        "Tag": "rro",
+        "Type": 2
+      }
+    ],
+    "_RoomGuid": "1080b559-5294-b904-5b82-2d2aa4dea17b",
+    "_IdSource": "synthetic"
+  },
+  {
+    "RoomId": 9000000000000000104,
+    "Name": "Legacy3DCharades",
+    "Description": "Legacy Charades",
+    "ImageName": "DefaultRoomImage.jpg",
+    "IsRRO": true,
+    "IsDorm": false,
+    "Accessibility": 1,
+    "MaxPlayers": 20,
+    "SubRooms": [
+      {
+        "Name": "Home",
+        "UnitySceneId": "4078dfed-24bb-4db7-863f-578ba48d726b",
+        "_SubRoomGuid": "ec2d797a-be0c-4f9c-a425-e0f4c650dec8"
+      }
+    ],
+    "Tags": [
+      {
+        "Tag": "rro",
+        "Type": 2
+      }
+    ],
+    "_RoomGuid": "5538ea7c-6aba-42ce-922b-47fc19d4c21b",
+    "_IdSource": "synthetic"
+  },
+  {
+    "RoomId": 9000000000000000105,
+    "Name": "TheInkSpace",
+    "Description": "The Ink Space Base Room",
+    "ImageName": "DefaultRoomImage.jpg",
+    "IsRRO": true,
+    "IsDorm": false,
+    "Accessibility": 1,
+    "MaxPlayers": 20,
+    "SubRooms": [
+      {
+        "Name": "Home",
+        "UnitySceneId": "1fa06e3c-c307-4c11-a91b-1fabcddb8a96",
+        "_SubRoomGuid": "70b5480f-fdfa-455f-aa94-aea780c936b9"
+      }
+    ],
+    "Tags": [
+      {
+        "Tag": "rro",
+        "Type": 2
+      }
+    ],
+    "_RoomGuid": "a778f79f-e2b4-4951-9713-5097de591d2d",
+    "_IdSource": "synthetic"
+  },
+  {
+    "RoomId": 9000000000000000106,
+    "Name": "DiscGolfLake",
+    "Description": "Lake",
+    "ImageName": "DefaultRoomImage.jpg",
+    "IsRRO": true,
+    "IsDorm": false,
+    "Accessibility": 1,
+    "MaxPlayers": 20,
+    "SubRooms": [
+      {
+        "Name": "Home",
+        "UnitySceneId": "f6f7256c-e438-4299-b99e-d20bef8cf7e0",
+        "_SubRoomGuid": "6cd09971-c9fb-8e44-9b7f-3cb9ff5f6bd0"
+      }
+    ],
+    "Tags": [
+      {
+        "Tag": "rro",
+        "Type": 2
+      }
+    ],
+    "_RoomGuid": "9365f155-a900-a864-1aa6-ae0500026994",
+    "_IdSource": "synthetic"
+  },
+  {
+    "RoomId": 9000000000000000107,
+    "Name": "DiscGolfPropulsion",
+    "Description": "Propulsion",
+    "ImageName": "DefaultRoomImage.jpg",
+    "IsRRO": true,
+    "IsDorm": false,
+    "Accessibility": 1,
+    "MaxPlayers": 20,
+    "SubRooms": [
+      {
+        "Name": "Home",
+        "UnitySceneId": "d9378c9f-80bc-46fb-ad1e-1bed8a674f55",
+        "_SubRoomGuid": "e687ebed-6502-ad24-2ae1-d4a1db441d34"
+      }
+    ],
+    "Tags": [
+      {
+        "Tag": "rro",
+        "Type": 2
+      }
+    ],
+    "_RoomGuid": "e002b533-ae3f-0e64-8941-73ed5eb2303c",
+    "_IdSource": "synthetic"
+  },
+  {
+    "RoomId": 9000000000000000108,
+    "Name": "Dodgeball",
+    "Description": "Dodgeball",
+    "ImageName": "DefaultRoomImage.jpg",
+    "IsRRO": true,
+    "IsDorm": false,
+    "Accessibility": 1,
+    "MaxPlayers": 20,
+    "SubRooms": [
+      {
+        "Name": "Home",
+        "UnitySceneId": "3d474b26-26f7-45e9-9a36-9b02847d5e6f",
+        "_SubRoomGuid": "27dd5218-dbea-b444-9b7c-a64e687aae67"
+      }
+    ],
+    "Tags": [
+      {
+        "Tag": "rro",
+        "Type": 2
+      }
+    ],
+    "_RoomGuid": "aa1ecc2e-fad7-57d4-f840-a4b39e911313",
+    "_IdSource": "synthetic"
+  },
+  {
+    "RoomId": 9000000000000000109,
+    "Name": "Paddleball",
+    "Description": "Paddleball",
+    "ImageName": "DefaultRoomImage.jpg",
+    "IsRRO": true,
+    "IsDorm": false,
+    "Accessibility": 1,
+    "MaxPlayers": 20,
+    "SubRooms": [
+      {
+        "Name": "Home",
+        "UnitySceneId": "d89f74fa-d51e-477a-a425-025a891dd499",
+        "_SubRoomGuid": "11512b3c-bf64-acc4-7bf6-139786237328"
+      }
+    ],
+    "Tags": [
+      {
+        "Tag": "rro",
+        "Type": 2
+      }
+    ],
+    "_RoomGuid": "8dfa5b25-d0a7-21e4-0a3e-b77e3ba6a8d0",
+    "_IdSource": "synthetic"
+  },
+  {
+    "RoomId": 9000000000000000110,
+    "Name": "Paintball",
+    "Description": "River",
+    "ImageName": "DefaultRoomImage.jpg",
+    "IsRRO": true,
+    "IsDorm": false,
+    "Accessibility": 1,
+    "MaxPlayers": 20,
+    "SubRooms": [
+      {
+        "Name": "River",
+        "UnitySceneId": "e122fe98-e7db-49e8-a1b1-105424b6e1f0",
+        "_SubRoomGuid": "84545710-2bb4-4867-ad8b-24863a16d1b2"
+      },
+      {
+        "Name": "Homestead",
+        "UnitySceneId": "a785267d-c579-42ea-be43-fec1992d1ca7",
+        "_SubRoomGuid": "f6709dc2-af81-46fc-88ba-f88f6c5035aa"
+      },
+      {
+        "Name": "Quarry",
+        "UnitySceneId": "ff4c6427-7079-4f59-b22a-69b089420827",
+        "_SubRoomGuid": "1c549cfb-455b-4f5e-b15e-467702a71240"
+      },
+      {
+        "Name": "Clearcut",
+        "UnitySceneId": "380d18b5-de9c-49f3-80f7-f4a95c1de161",
+        "_SubRoomGuid": "28363a22-f0bb-4e46-8346-d76e8ac634f7"
+      },
+      {
+        "Name": "Spillway",
+        "UnitySceneId": "58763055-2dfb-4814-80b8-16fac5c85709",
+        "_SubRoomGuid": "7d661e29-f036-4fe9-8e9d-4b919fee638d"
+      },
+      {
+        "Name": "Drive-in",
+        "UnitySceneId": "65ddbb48-5a01-4e3e-972d-e5c7419e2bc3",
+        "_SubRoomGuid": "dc185520-0fa2-46d5-bc27-a613c6679c7c"
+      }
+    ],
+    "Tags": [
+      {
+        "Tag": "rro",
+        "Type": 2
+      }
+    ],
+    "_RoomGuid": "42b5faef-e211-4f02-98e1-f4633e18209c",
+    "_IdSource": "synthetic"
+  },
+  {
+    "RoomId": 9000000000000000111,
+    "Name": "PaintballVR",
+    "Description": "River",
+    "ImageName": "DefaultRoomImage.jpg",
+    "IsRRO": true,
+    "IsDorm": false,
+    "Accessibility": 1,
+    "MaxPlayers": 20,
+    "SubRooms": [
+      {
+        "Name": "River",
+        "UnitySceneId": "e122fe98-e7db-49e8-a1b1-105424b6e1f0",
+        "_SubRoomGuid": "a4d7afc1-ae7a-8e04-1bea-f7d71df384fd"
+      },
+      {
+        "Name": "Homestead",
+        "UnitySceneId": "a785267d-c579-42ea-be43-fec1992d1ca7",
+        "_SubRoomGuid": "d686129f-fdf7-1954-a9f6-f0a80d1af234"
+      },
+      {
+        "Name": "Quarry",
+        "UnitySceneId": "ff4c6427-7079-4f59-b22a-69b089420827",
+        "_SubRoomGuid": "a5ba53f2-a7cf-d3b4-8836-80fa08e02a27"
+      },
+      {
+        "Name": "Clearcut",
+        "UnitySceneId": "380d18b5-de9c-49f3-80f7-f4a95c1de161",
+        "_SubRoomGuid": "1636a319-9826-bfc4-18f8-ee1b1be6f806"
+      },
+      {
+        "Name": "Spillway",
+        "UnitySceneId": "58763055-2dfb-4814-80b8-16fac5c85709",
+        "_SubRoomGuid": "9a5a9875-67bb-f444-e804-0e0296d3c19c"
+      },
+      {
+        "Name": "Drive-in",
+        "UnitySceneId": "65ddbb48-5a01-4e3e-972d-e5c7419e2bc3",
+        "_SubRoomGuid": "11b9a462-ac65-4588-ad0b-20115abe44b0"
+      }
+    ],
+    "Tags": [
+      {
+        "Tag": "rro",
+        "Type": 2
+      }
+    ],
+    "_RoomGuid": "6672b30b-108c-cdc4-9873-917bbd882a27",
+    "_IdSource": "synthetic"
+  },
+  {
+    "RoomId": 9000000000000000112,
+    "Name": "GoldenTrophy",
+    "Description": "Quest For The Golden Trophy",
+    "ImageName": "DefaultRoomImage.jpg",
+    "IsRRO": true,
+    "IsDorm": false,
+    "Accessibility": 1,
+    "MaxPlayers": 20,
+    "SubRooms": [
+      {
+        "Name": "Home",
+        "UnitySceneId": "91e16e35-f48f-4700-ab8a-a1b79e50e51b",
+        "_SubRoomGuid": "3518de14-8412-96f4-db0a-41abe0196bbe"
+      }
+    ],
+    "Tags": [
+      {
+        "Tag": "rro",
+        "Type": 2
+      }
+    ],
+    "_RoomGuid": "8b5f720a-29b0-fee4-1aab-a76d99405a21",
+    "_IdSource": "synthetic"
+  },
+  {
+    "RoomId": 9000000000000000113,
+    "Name": "Orientation",
+    "Description": "Orientation",
+    "ImageName": "DefaultRoomImage.jpg",
+    "IsRRO": true,
+    "IsDorm": false,
+    "Accessibility": 1,
+    "MaxPlayers": 20,
+    "SubRooms": [
+      {
+        "Name": "Home",
+        "UnitySceneId": "c79709d8-a31b-48aa-9eb8-cc31ba9505e8",
+        "_SubRoomGuid": "2c9da604-fdc8-47b7-b527-7a692ce97a9b"
+      }
+    ],
+    "Tags": [
+      {
+        "Tag": "rro",
+        "Type": 2
+      }
+    ],
+    "_RoomGuid": "5a8e804a-d082-47cd-ab71-039aa680da14",
+    "_IdSource": "synthetic"
+  },
+  {
+    "RoomId": 9000000000000000114,
+    "Name": "TheRiseofJumbotron",
+    "Description": "The Rise Of JumboTron",
+    "ImageName": "DefaultRoomImage.jpg",
+    "IsRRO": true,
+    "IsDorm": false,
+    "Accessibility": 1,
+    "MaxPlayers": 20,
+    "SubRooms": [
+      {
+        "Name": "Home",
+        "UnitySceneId": "acc06e66-c2d0-4361-b0cd-46246a4c455c",
+        "_SubRoomGuid": "4a6968bf-0283-2d34-ca18-29f1145e1f69"
+      }
+    ],
+    "Tags": [
+      {
+        "Tag": "rro",
+        "Type": 2
+      }
+    ],
+    "_RoomGuid": "0fe6e761-9adc-14e4-2b7c-ecf2e365b80a",
+    "_IdSource": "synthetic"
+  },
+  {
+    "RoomId": 9000000000000000115,
+    "Name": "CrimsonCauldron",
+    "Description": "Curse of the Crimson Cauldron",
+    "ImageName": "DefaultRoomImage.jpg",
+    "IsRRO": true,
+    "IsDorm": false,
+    "Accessibility": 1,
+    "MaxPlayers": 20,
+    "SubRooms": [
+      {
+        "Name": "Home",
+        "UnitySceneId": "949fa41f-4347-45c0-b7ac-489129174045",
+        "_SubRoomGuid": "4a169c2f-28b2-e9a4-7ab1-61c9c270b1ab"
+      }
+    ],
+    "Tags": [
+      {
+        "Tag": "rro",
+        "Type": 2
+      }
+    ],
+    "_RoomGuid": "fa6d5c07-c7fa-38a4-eb98-acaee6c8fd7b",
+    "_IdSource": "synthetic"
+  },
+  {
+    "RoomId": 9000000000000000116,
+    "Name": "IsleOfLostSkulls",
+    "Description": "The Isle of Lost Skulls",
+    "ImageName": "DefaultRoomImage.jpg",
+    "IsRRO": true,
+    "IsDorm": false,
+    "Accessibility": 1,
+    "MaxPlayers": 20,
+    "SubRooms": [
+      {
+        "Name": "Home",
+        "UnitySceneId": "7e01cfe0-820a-406f-b1b3-0a5bf575235c",
+        "_SubRoomGuid": "02d23e1d-4c1a-15b4-aba5-98458d750417"
+      }
+    ],
+    "Tags": [
+      {
+        "Tag": "rro",
+        "Type": 2
+      }
+    ],
+    "_RoomGuid": "51fe6f77-a545-66d4-684c-20505d9472eb",
+    "_IdSource": "synthetic"
+  },
+  {
+    "RoomId": 9000000000000000117,
+    "Name": "Soccer",
+    "Description": "Soccer",
+    "ImageName": "DefaultRoomImage.jpg",
+    "IsRRO": true,
+    "IsDorm": false,
+    "Accessibility": 1,
+    "MaxPlayers": 20,
+    "SubRooms": [
+      {
+        "Name": "Home",
+        "UnitySceneId": "6d5eea4b-f069-4ed0-9916-0e2f07df0d03",
+        "_SubRoomGuid": "9a4b4871-28dc-4b24-8b8f-e0914db002eb"
+      }
+    ],
+    "Tags": [
+      {
+        "Tag": "rro",
+        "Type": 2
+      }
+    ],
+    "_RoomGuid": "99e24047-c765-8584-78d0-f55d604ecb00",
+    "_IdSource": "synthetic"
+  },
+  {
+    "RoomId": 9000000000000000118,
+    "Name": "LaserTag",
+    "Description": "Warehouse",
+    "ImageName": "DefaultRoomImage.jpg",
+    "IsRRO": true,
+    "IsDorm": false,
+    "Accessibility": 1,
+    "MaxPlayers": 20,
+    "SubRooms": [
+      {
+        "Name": "Hangar",
+        "UnitySceneId": "239e676c-f12f-489f-bf3a-d4c383d692c3",
+        "_SubRoomGuid": "8f8fcaf8-7b13-e114-880c-72ee8c9fcb78"
+      },
+      {
+        "Name": "CyberJunkCity",
+        "UnitySceneId": "9d6456ce-6264-48b4-808d-2d96b3d91038",
+        "_SubRoomGuid": "333f409d-f9ad-46c9-b6fb-b0bbd30cb0b2"
+      }
+    ],
+    "Tags": [
+      {
+        "Tag": "rro",
+        "Type": 2
+      }
+    ],
+    "_RoomGuid": "8cf5a0b5-d683-51f4-2bb7-57821b533cad",
+    "_IdSource": "synthetic"
+  },
+  {
+    "RoomId": 9000000000000000119,
+    "Name": "LaserTagCyberJunk",
+    "Description": "CyberJunk City",
+    "ImageName": "DefaultRoomImage.jpg",
+    "IsRRO": true,
+    "IsDorm": false,
+    "Accessibility": 1,
+    "MaxPlayers": 20,
+    "SubRooms": [
+      {
+        "Name": "Home",
+        "UnitySceneId": "9d6456ce-6264-48b4-808d-2d96b3d91038",
+        "_SubRoomGuid": "d59f7e16-9f27-6924-a899-2739bfc056fe"
+      }
+    ],
+    "Tags": [
+      {
+        "Tag": "rro",
+        "Type": 2
+      }
+    ],
+    "_RoomGuid": "c47969aa-c9ac-85e4-ea35-470f2a11d47f",
+    "_IdSource": "synthetic"
+  },
+  {
+    "RoomId": 9000000000000000120,
+    "Name": "RecRoyaleSquads",
+    "Description": "Frontier Squads",
+    "ImageName": "DefaultRoomImage.jpg",
+    "IsRRO": true,
+    "IsDorm": false,
+    "Accessibility": 1,
+    "MaxPlayers": 20,
+    "SubRooms": [
+      {
+        "Name": "Home",
+        "UnitySceneId": "253fa009-6e65-4c90-91a1-7137a56a267f",
+        "_SubRoomGuid": "1d282c2d-6edc-4910-afb3-48fbb9ad74a4"
+      }
+    ],
+    "Tags": [
+      {
+        "Tag": "rro",
+        "Type": 2
+      }
+    ],
+    "_RoomGuid": "224046e6-4159-49eb-98cf-1e602849ce54",
+    "_IdSource": "synthetic"
+  },
+  {
+    "RoomId": 9000000000000000121,
+    "Name": "RecRoyaleSolos",
+    "Description": "Frontier Solos",
+    "ImageName": "DefaultRoomImage.jpg",
+    "IsRRO": true,
+    "IsDorm": false,
+    "Accessibility": 1,
+    "MaxPlayers": 20,
+    "SubRooms": [
+      {
+        "Name": "Home",
+        "UnitySceneId": "b010171f-4875-4e89-baba-61e878cd41e1",
+        "_SubRoomGuid": "85b43509-77f7-3884-3a6b-9a4e737d6d11"
+      }
+    ],
+    "Tags": [
+      {
+        "Tag": "rro",
+        "Type": 2
+      }
+    ],
+    "_RoomGuid": "f4a10613-c6dc-a574-6abd-17e853cd223c",
+    "_IdSource": "synthetic"
+  },
+  {
+    "RoomId": 9000000000000000122,
+    "Name": "Lounge",
+    "Description": "The Lounge",
+    "ImageName": "DefaultRoomImage.jpg",
+    "IsRRO": true,
+    "IsDorm": false,
+    "Accessibility": 1,
+    "MaxPlayers": 20,
+    "SubRooms": [
+      {
+        "Name": "Home",
+        "UnitySceneId": "a067557f-ca32-43e6-b6e5-daaec60b4f5a",
+        "_SubRoomGuid": "c9e928de-ed1f-d564-38af-9bf525ac0feb"
+      }
+    ],
+    "Tags": [
+      {
+        "Tag": "rro",
+        "Type": 2
+      }
+    ],
+    "_RoomGuid": "94b533d0-08b3-7964-c89c-491906e032b9",
+    "_IdSource": "synthetic"
+  },
+  {
+    "RoomId": 9000000000000000123,
+    "Name": "PerformanceHall",
+    "Description": "Performance Hall",
+    "ImageName": "DefaultRoomImage.jpg",
+    "IsRRO": true,
+    "IsDorm": false,
+    "Accessibility": 1,
+    "MaxPlayers": 20,
+    "SubRooms": [
+      {
+        "Name": "Home",
+        "UnitySceneId": "9932f88f-3929-43a0-a012-a40b5128e346",
+        "_SubRoomGuid": "b55204c1-9a48-6ea4-fbd0-69fb125a68cf"
+      }
+    ],
+    "Tags": [
+      {
+        "Tag": "rro",
+        "Type": 2
+      }
+    ],
+    "_RoomGuid": "22ab0d3c-3d7d-70e4-eb5c-c8c47cca1906",
+    "_IdSource": "synthetic"
+  },
+  {
+    "RoomId": 9000000000000000124,
+    "Name": "MakerRoom",
+    "Description": "Maker Room",
+    "ImageName": "DefaultRoomImage.jpg",
+    "IsRRO": true,
+    "IsDorm": false,
+    "Accessibility": 1,
+    "MaxPlayers": 20,
+    "SubRooms": [
+      {
+        "Name": "Home",
+        "UnitySceneId": "a75f7547-79eb-47c6-8986-6767abcb4f92",
+        "_SubRoomGuid": "aa889faf-91c8-b7d4-5945-ab7e714f7efa"
+      }
+    ],
+    "Tags": [
+      {
+        "Tag": "rro",
+        "Type": 2
+      }
+    ],
+    "_RoomGuid": "3a2d8a48-2a7e-4344-bb88-254ea105043e",
+    "_IdSource": "synthetic"
+  },
+  {
+    "RoomId": 9000000000000000125,
+    "Name": "Park",
+    "Description": "Park",
+    "ImageName": "DefaultRoomImage.jpg",
+    "IsRRO": true,
+    "IsDorm": false,
+    "Accessibility": 1,
+    "MaxPlayers": 20,
+    "SubRooms": [
+      {
+        "Name": "Home",
+        "UnitySceneId": "0a864c86-5a71-4e18-8041-8124e4dc9d98",
+        "_SubRoomGuid": "570a59bf-b4e2-6db4-ca9a-42329563dd30"
+      }
+    ],
+    "Tags": [
+      {
+        "Tag": "rro",
+        "Type": 2
+      }
+    ],
+    "_RoomGuid": "00788628-81ba-3df4-da7b-142051bdff98",
+    "_IdSource": "synthetic"
+  },
+  {
+    "RoomId": 9000000000000000126,
+    "Name": "River",
+    "Description": "River",
+    "ImageName": "DefaultRoomImage.jpg",
+    "IsRRO": true,
+    "IsDorm": false,
+    "Accessibility": 1,
+    "MaxPlayers": 20,
+    "SubRooms": [
+      {
+        "Name": "Home",
+        "UnitySceneId": "e122fe98-e7db-49e8-a1b1-105424b6e1f0",
+        "_SubRoomGuid": "dc445d24-01cf-43f9-a7c4-33f432514735"
+      }
+    ],
+    "Tags": [
+      {
+        "Tag": "rro",
+        "Type": 2
+      }
+    ],
+    "_RoomGuid": "af923b9b-d5fd-4435-919b-d8621de3865e",
+    "_IdSource": "synthetic"
+  },
+  {
+    "RoomId": 9000000000000000127,
+    "Name": "Homestead",
+    "Description": "Homestead",
+    "ImageName": "DefaultRoomImage.jpg",
+    "IsRRO": true,
+    "IsDorm": false,
+    "Accessibility": 1,
+    "MaxPlayers": 20,
+    "SubRooms": [
+      {
+        "Name": "Home",
+        "UnitySceneId": "a785267d-c579-42ea-be43-fec1992d1ca7",
+        "_SubRoomGuid": "daaa8763-868d-4081-9e8d-e931c111cc90"
+      }
+    ],
+    "Tags": [
+      {
+        "Tag": "rro",
+        "Type": 2
+      }
+    ],
+    "_RoomGuid": "3369e698-ad83-43cf-bf44-5767da6de2b9",
+    "_IdSource": "synthetic"
+  },
+  {
+    "RoomId": 9000000000000000128,
+    "Name": "Quarry",
+    "Description": "Quarry",
+    "ImageName": "DefaultRoomImage.jpg",
+    "IsRRO": true,
+    "IsDorm": false,
+    "Accessibility": 1,
+    "MaxPlayers": 20,
+    "SubRooms": [
+      {
+        "Name": "Home",
+        "UnitySceneId": "ff4c6427-7079-4f59-b22a-69b089420827",
+        "_SubRoomGuid": "f083ff9a-98af-4d8b-b7ff-5b84a66367d5"
+      }
+    ],
+    "Tags": [
+      {
+        "Tag": "rro",
+        "Type": 2
+      }
+    ],
+    "_RoomGuid": "37e59cf8-50c5-4075-8e61-f51515836101",
+    "_IdSource": "synthetic"
+  },
+  {
+    "RoomId": 9000000000000000129,
+    "Name": "Clearcut",
+    "Description": "Clear Cut",
+    "ImageName": "DefaultRoomImage.jpg",
+    "IsRRO": true,
+    "IsDorm": false,
+    "Accessibility": 1,
+    "MaxPlayers": 20,
+    "SubRooms": [
+      {
+        "Name": "Home",
+        "UnitySceneId": "380d18b5-de9c-49f3-80f7-f4a95c1de161",
+        "_SubRoomGuid": "c5f45037-8c60-494d-ad62-3e5168560b36"
+      }
+    ],
+    "Tags": [
+      {
+        "Tag": "rro",
+        "Type": 2
+      }
+    ],
+    "_RoomGuid": "af8b3bdd-4084-488f-aa4a-b78dec436753",
+    "_IdSource": "synthetic"
+  },
+  {
+    "RoomId": 9000000000000000130,
+    "Name": "Spillway",
+    "Description": "Spillway",
+    "ImageName": "DefaultRoomImage.jpg",
+    "IsRRO": true,
+    "IsDorm": false,
+    "Accessibility": 1,
+    "MaxPlayers": 20,
+    "SubRooms": [
+      {
+        "Name": "Home",
+        "UnitySceneId": "58763055-2dfb-4814-80b8-16fac5c85709",
+        "_SubRoomGuid": "d336999f-9db0-42fc-8af5-592e9043102f"
+      }
+    ],
+    "Tags": [
+      {
+        "Tag": "rro",
+        "Type": 2
+      }
+    ],
+    "_RoomGuid": "2d250de9-9bb2-4168-96a6-a9a0e14aa2ba",
+    "_IdSource": "synthetic"
+  },
+  {
+    "RoomId": 9000000000000000131,
+    "Name": "Lake",
+    "Description": "Lake",
+    "ImageName": "DefaultRoomImage.jpg",
+    "IsRRO": true,
+    "IsDorm": false,
+    "Accessibility": 1,
+    "MaxPlayers": 20,
+    "SubRooms": [
+      {
+        "Name": "Home",
+        "UnitySceneId": "f6f7256c-e438-4299-b99e-d20bef8cf7e0",
+        "_SubRoomGuid": "28253579-64cb-421b-988b-9fea890fd129"
+      }
+    ],
+    "Tags": [
+      {
+        "Tag": "rro",
+        "Type": 2
+      }
+    ],
+    "_RoomGuid": "12131500-c742-437c-8487-b9e1e2edc381",
+    "_IdSource": "synthetic"
+  },
+  {
+    "RoomId": 9000000000000000132,
+    "Name": "PropulsionTestRange",
+    "Description": "Propulsion",
+    "ImageName": "DefaultRoomImage.jpg",
+    "IsRRO": true,
+    "IsDorm": false,
+    "Accessibility": 1,
+    "MaxPlayers": 20,
+    "SubRooms": [
+      {
+        "Name": "Home",
+        "UnitySceneId": "d9378c9f-80bc-46fb-ad1e-1bed8a674f55",
+        "_SubRoomGuid": "cd82c0aa-5dbc-4db3-ade3-30576d3bc473"
+      }
+    ],
+    "Tags": [
+      {
+        "Tag": "rro",
+        "Type": 2
+      }
+    ],
+    "_RoomGuid": "fd06572c-e828-440d-8783-d87c792facdd",
+    "_IdSource": "synthetic"
+  },
+  {
+    "RoomId": 9000000000000000133,
+    "Name": "Gym",
+    "Description": "Dodgeball",
+    "ImageName": "DefaultRoomImage.jpg",
+    "IsRRO": true,
+    "IsDorm": false,
+    "Accessibility": 1,
+    "MaxPlayers": 20,
+    "SubRooms": [
+      {
+        "Name": "Home",
+        "UnitySceneId": "3d474b26-26f7-45e9-9a36-9b02847d5e6f",
+        "_SubRoomGuid": "8cecdc5b-d17b-4eba-9dd3-7b0ca54d3fd2"
+      }
+    ],
+    "Tags": [
+      {
+        "Tag": "rro",
+        "Type": 2
+      }
+    ],
+    "_RoomGuid": "cb7ce944-9415-4d6e-aa6a-274390d2f849",
+    "_IdSource": "synthetic"
+  },
+  {
+    "RoomId": 9000000000000000134,
+    "Name": "Stadium",
+    "Description": "Soccer",
+    "ImageName": "DefaultRoomImage.jpg",
+    "IsRRO": true,
+    "IsDorm": false,
+    "Accessibility": 1,
+    "MaxPlayers": 20,
+    "SubRooms": [
+      {
+        "Name": "Home",
+        "UnitySceneId": "6d5eea4b-f069-4ed0-9916-0e2f07df0d03",
+        "_SubRoomGuid": "b4f8632d-ae8b-4c3d-a433-0687131f8507"
+      }
+    ],
+    "Tags": [
+      {
+        "Tag": "rro",
+        "Type": 2
+      }
+    ],
+    "_RoomGuid": "01fbdc4c-1a74-4843-8fe3-c64fc46b606e",
+    "_IdSource": "synthetic"
+  },
+  {
+    "RoomId": 9000000000000000135,
+    "Name": "Hangar",
+    "Description": "Warehouse",
+    "ImageName": "DefaultRoomImage.jpg",
+    "IsRRO": true,
+    "IsDorm": false,
+    "Accessibility": 1,
+    "MaxPlayers": 20,
+    "SubRooms": [
+      {
+        "Name": "Home",
+        "UnitySceneId": "239e676c-f12f-489f-bf3a-d4c383d692c3",
+        "_SubRoomGuid": "26330026-ebc7-4d44-8c85-4f38d2ad30a1"
+      }
+    ],
+    "Tags": [
+      {
+        "Tag": "rro",
+        "Type": 2
+      }
+    ],
+    "_RoomGuid": "4830b10c-0faf-4e73-8244-10cf55a503d9",
+    "_IdSource": "synthetic"
+  },
+  {
+    "RoomId": 9000000000000000136,
+    "Name": "CyberJunkCity",
+    "Description": "CyberJunk City",
+    "ImageName": "DefaultRoomImage.jpg",
+    "IsRRO": true,
+    "IsDorm": false,
+    "Accessibility": 1,
+    "MaxPlayers": 20,
+    "SubRooms": [
+      {
+        "Name": "Home",
+        "UnitySceneId": "9d6456ce-6264-48b4-808d-2d96b3d91038",
+        "_SubRoomGuid": "6e0edd15-b904-f074-3b1f-cec488eba1a3"
+      }
+    ],
+    "Tags": [
+      {
+        "Tag": "rro",
+        "Type": 2
+      }
+    ],
+    "_RoomGuid": "c3f801c2-13dd-aed4-0862-85d095bca56b",
+    "_IdSource": "synthetic"
+  },
+  {
+    "RoomId": 9000000000000000137,
+    "Name": "DodgeballVR",
+    "Description": "Dodgeball",
+    "ImageName": "DefaultRoomImage.jpg",
+    "IsRRO": true,
+    "IsDorm": false,
+    "Accessibility": 1,
+    "MaxPlayers": 20,
+    "SubRooms": [
+      {
+        "Name": "Home",
+        "UnitySceneId": "3d474b26-26f7-45e9-9a36-9b02847d5e6f",
+        "_SubRoomGuid": "bcbda991-93e7-4d05-b2e2-7c9512e4d4f2"
+      }
+    ],
+    "Tags": [
+      {
+        "Tag": "rro",
+        "Type": 2
+      }
+    ],
+    "_RoomGuid": "c29d7c49-f4df-45cd-9a53-a6a192e44fbd",
+    "_IdSource": "synthetic"
+  },
+  {
+    "RoomId": 9000000000000000138,
+    "Name": "Crescendo",
+    "Description": "Crescendo of the Blood Moon",
+    "ImageName": "DefaultRoomImage.jpg",
+    "IsRRO": true,
+    "IsDorm": false,
+    "Accessibility": 1,
+    "MaxPlayers": 20,
+    "SubRooms": [
+      {
+        "Name": "Home",
+        "UnitySceneId": "49cb8993-a956-43e2-86f4-1318f279b22a",
+        "_SubRoomGuid": "66726423-6e03-4548-9990-f1b10e8c5c2e"
+      }
+    ],
+    "Tags": [
+      {
+        "Tag": "rro",
+        "Type": 2
+      }
+    ],
+    "_RoomGuid": "7131bb49-6e2c-45da-a83d-ddf61d6463be",
+    "_IdSource": "synthetic"
+  },
+  {
+    "RoomId": 9000000000000000139,
+    "Name": "Bowling",
+    "Description": "Bowling Alley",
+    "ImageName": "DefaultRoomImage.jpg",
+    "IsRRO": true,
+    "IsDorm": false,
+    "Accessibility": 1,
+    "MaxPlayers": 20,
+    "SubRooms": [
+      {
+        "Name": "Home",
+        "UnitySceneId": "ae929543-9a07-41d5-8ee9-dbbee8c36800",
+        "_SubRoomGuid": "d61f36d3-f702-4002-a065-e1b6a59d4036"
+      }
+    ],
+    "Tags": [
+      {
+        "Tag": "rro",
+        "Type": 2
+      }
+    ],
+    "_RoomGuid": "0ba2a62a-2d02-403b-9f85-7472e472b632",
+    "_IdSource": "synthetic"
+  },
+  {
+    "RoomId": 9000000000000000140,
+    "Name": "BowlingAlley",
+    "Description": "Bowling Alley",
+    "ImageName": "DefaultRoomImage.jpg",
+    "IsRRO": true,
+    "IsDorm": false,
+    "Accessibility": 1,
+    "MaxPlayers": 20,
+    "SubRooms": [
+      {
+        "Name": "Home",
+        "UnitySceneId": "ae929543-9a07-41d5-8ee9-dbbee8c36800",
+        "_SubRoomGuid": "b492f0d4-5f72-4429-9ea5-decf369e7aa7"
+      }
+    ],
+    "Tags": [
+      {
+        "Tag": "rro",
+        "Type": 2
+      }
+    ],
+    "_RoomGuid": "63de6dd3-8b9a-4ce5-afbe-9e01fefcad02",
+    "_IdSource": "synthetic"
+  },
+  {
+    "RoomId": 9000000000000000141,
+    "Name": "AnimationRecordingStudio",
+    "Description": "Animation Recording Studio",
+    "ImageName": "DefaultRoomImage.jpg",
+    "IsRRO": true,
+    "IsDorm": false,
+    "Accessibility": 1,
+    "MaxPlayers": 20,
+    "SubRooms": [
+      {
+        "Name": "Home",
+        "UnitySceneId": "a95c349c-0f96-4c2d-a4c8-4969ffa8ea44",
+        "_SubRoomGuid": "8fe5818c-d466-4ffb-b502-f7d5f67efc7a"
+      }
+    ],
+    "Tags": [
+      {
+        "Tag": "rro",
+        "Type": 2
+      }
+    ],
+    "_RoomGuid": "3c6fd16c-43c7-4c0e-bfd9-f90eaf077ba7",
+    "_IdSource": "synthetic"
+  },
+  {
+    "RoomId": 9000000000000000142,
+    "Name": "StuntRunner",
+    "Description": "StuntRunner",
+    "ImageName": "DefaultRoomImage.jpg",
+    "IsRRO": true,
+    "IsDorm": false,
+    "Accessibility": 1,
+    "MaxPlayers": 20,
+    "SubRooms": [
+      {
+        "Name": "StuntRunner",
+        "UnitySceneId": "b7281665-a715-4051-826b-8e08e69c6172",
+        "_SubRoomGuid": "f8a71ce1-c989-4e00-9e10-3f04c241f6f3"
+      },
+      {
+        "Name": "TheMainEvent",
+        "UnitySceneId": "3a636bd2-f896-424c-9225-c184522c0d87",
+        "_SubRoomGuid": "cacc6e68-644a-448d-b83f-59ea690318ec"
+      }
+    ],
+    "Tags": [
+      {
+        "Tag": "rro",
+        "Type": 2
+      }
+    ],
+    "_RoomGuid": "96797ca7-67a4-4c8d-b50f-a956dfd6f525",
+    "_IdSource": "synthetic"
+  },
+  {
+    "RoomId": 9000000000000000143,
+    "Name": "StuntRunnerBaseRoom",
+    "Description": "StuntRunner Base Room",
+    "ImageName": "DefaultRoomImage.jpg",
+    "IsRRO": true,
+    "IsDorm": false,
+    "Accessibility": 1,
+    "MaxPlayers": 20,
+    "SubRooms": [
+      {
+        "Name": "Home",
+        "UnitySceneId": "882e9b96-7115-4b03-86f6-c0c9d8e22e00",
+        "_SubRoomGuid": "57ec15a2-34b5-42d4-a5d8-ddad6888e0e3"
+      }
+    ],
+    "Tags": [
+      {
+        "Tag": "rro",
+        "Type": 2
+      }
+    ],
+    "_RoomGuid": "ea3cacc0-e075-4b7f-92e3-21a81ab24e3e",
+    "_IdSource": "synthetic"
+  },
+  {
+    "RoomId": 9000000000000000144,
+    "Name": "Registration",
+    "Description": "Registration",
+    "ImageName": "DefaultRoomImage.jpg",
+    "IsRRO": true,
+    "IsDorm": false,
+    "Accessibility": 1,
+    "MaxPlayers": 20,
+    "SubRooms": [
+      {
+        "Name": "Home",
+        "UnitySceneId": "cf61556d-68fd-4288-9ae5-7a512621e569",
+        "_SubRoomGuid": "c300e175-8420-44fd-9966-c422275993f1"
+      }
+    ],
+    "Tags": [
+      {
+        "Tag": "rro",
+        "Type": 2
+      }
+    ],
+    "_RoomGuid": "8719e5b5-4ca5-463c-af8d-30c5e286d6e4",
+    "_IdSource": "synthetic"
+  },
+  {
+    "RoomId": 9000000000000000145,
+    "Name": "ARRoom",
+    "Description": "AR Room",
+    "ImageName": "DefaultRoomImage.jpg",
+    "IsRRO": true,
+    "IsDorm": false,
+    "Accessibility": 1,
+    "MaxPlayers": 20,
+    "SubRooms": [
+      {
+        "Name": "Home",
+        "UnitySceneId": "bf268f5f-b55b-41af-8628-32fa4b5d70b6",
+        "_SubRoomGuid": "9fc2886b-3508-4191-9389-ccd0a6ee8a29"
+      }
+    ],
+    "Tags": [
+      {
+        "Tag": "rro",
+        "Type": 2
+      }
+    ],
+    "_RoomGuid": "584d0fd1-4a2f-4373-ac29-09f5c4f9da89",
+    "_IdSource": "synthetic"
+  },
+  {
+    "RoomId": 9000000000000000146,
+    "Name": "PaintballRiver",
+    "Description": "River",
+    "ImageName": "DefaultRoomImage.jpg",
+    "IsRRO": true,
+    "IsDorm": false,
+    "Accessibility": 1,
+    "MaxPlayers": 20,
+    "SubRooms": [
+      {
+        "Name": "Home",
+        "UnitySceneId": "e122fe98-e7db-49e8-a1b1-105424b6e1f0",
+        "_SubRoomGuid": "071c6035-88c3-4c3e-b8c6-67a4275de23a"
+      }
+    ],
+    "Tags": [
+      {
+        "Tag": "rro",
+        "Type": 2
+      }
+    ],
+    "_RoomGuid": "5e473425-feec-4607-8b51-a14779176f8c",
+    "_IdSource": "synthetic"
+  },
+  {
+    "RoomId": 9000000000000000147,
+    "Name": "PaintballHomestead",
+    "Description": "Homestead",
+    "ImageName": "DefaultRoomImage.jpg",
+    "IsRRO": true,
+    "IsDorm": false,
+    "Accessibility": 1,
+    "MaxPlayers": 20,
+    "SubRooms": [
+      {
+        "Name": "Home",
+        "UnitySceneId": "a785267d-c579-42ea-be43-fec1992d1ca7",
+        "_SubRoomGuid": "84366ffe-b67a-4128-b517-1a0eaed0b898"
+      }
+    ],
+    "Tags": [
+      {
+        "Tag": "rro",
+        "Type": 2
+      }
+    ],
+    "_RoomGuid": "40dd2087-149d-44b1-82e3-1433b006439b",
+    "_IdSource": "synthetic"
+  },
+  {
+    "RoomId": 9000000000000000148,
+    "Name": "PaintballQuarry",
+    "Description": "Quarry",
+    "ImageName": "DefaultRoomImage.jpg",
+    "IsRRO": true,
+    "IsDorm": false,
+    "Accessibility": 1,
+    "MaxPlayers": 20,
+    "SubRooms": [
+      {
+        "Name": "Home",
+        "UnitySceneId": "ff4c6427-7079-4f59-b22a-69b089420827",
+        "_SubRoomGuid": "e3e2935c-59be-449d-bed9-6f0111106409"
+      }
+    ],
+    "Tags": [
+      {
+        "Tag": "rro",
+        "Type": 2
+      }
+    ],
+    "_RoomGuid": "2a4446fa-4229-4d4f-b854-5a8a2916d688",
+    "_IdSource": "synthetic"
+  },
+  {
+    "RoomId": 9000000000000000149,
+    "Name": "PaintballClearcut",
+    "Description": "Clear Cut",
+    "ImageName": "DefaultRoomImage.jpg",
+    "IsRRO": true,
+    "IsDorm": false,
+    "Accessibility": 1,
+    "MaxPlayers": 20,
+    "SubRooms": [
+      {
+        "Name": "Home",
+        "UnitySceneId": "380d18b5-de9c-49f3-80f7-f4a95c1de161",
+        "_SubRoomGuid": "17f9fd8d-0e20-4a41-996a-81c5f41daa8a"
+      }
+    ],
+    "Tags": [
+      {
+        "Tag": "rro",
+        "Type": 2
+      }
+    ],
+    "_RoomGuid": "5b475bf0-1156-4310-9b89-3f05808c73b5",
+    "_IdSource": "synthetic"
+  },
+  {
+    "RoomId": 9000000000000000150,
+    "Name": "PaintballSpillway",
+    "Description": "Spillway",
+    "ImageName": "DefaultRoomImage.jpg",
+    "IsRRO": true,
+    "IsDorm": false,
+    "Accessibility": 1,
+    "MaxPlayers": 20,
+    "SubRooms": [
+      {
+        "Name": "Home",
+        "UnitySceneId": "58763055-2dfb-4814-80b8-16fac5c85709",
+        "_SubRoomGuid": "c71e01bf-b179-49f9-a160-468b02ac5057"
+      }
+    ],
+    "Tags": [
+      {
+        "Tag": "rro",
+        "Type": 2
+      }
+    ],
+    "_RoomGuid": "ab95f886-b503-45b2-9845-d27eff5447a1",
+    "_IdSource": "synthetic"
+  },
+  {
+    "RoomId": 9000000000000000151,
+    "Name": "PaintballDriveIn",
+    "Description": "DriveIn",
+    "ImageName": "DefaultRoomImage.jpg",
+    "IsRRO": true,
+    "IsDorm": false,
+    "Accessibility": 1,
+    "MaxPlayers": 20,
+    "SubRooms": [
+      {
+        "Name": "Home",
+        "UnitySceneId": "65ddbb48-5a01-4e3e-972d-e5c7419e2bc3",
+        "_SubRoomGuid": "2c506573-e4f7-440b-a8ee-c2334beb6528"
+      }
+    ],
+    "Tags": [
+      {
+        "Tag": "rro",
+        "Type": 2
+      }
+    ],
+    "_RoomGuid": "b90d888e-4d50-49ff-ba7f-8702f669a97d",
+    "_IdSource": "synthetic"
+  },
+  {
+    "RoomId": 9000000000000000152,
+    "Name": "DriveIn",
+    "Description": "DriveIn",
+    "ImageName": "DefaultRoomImage.jpg",
+    "IsRRO": true,
+    "IsDorm": false,
+    "Accessibility": 1,
+    "MaxPlayers": 20,
+    "SubRooms": [
+      {
+        "Name": "Home",
+        "UnitySceneId": "65ddbb48-5a01-4e3e-972d-e5c7419e2bc3",
+        "_SubRoomGuid": "251fbfc1-d636-42ec-868f-29a090909fe9"
+      }
+    ],
+    "Tags": [
+      {
+        "Tag": "rro",
+        "Type": 2
+      }
+    ],
+    "_RoomGuid": "8dfa4a9f-a12a-4985-b22a-0f7439ecc07f",
+    "_IdSource": "synthetic"
+  },
+  {
+    "RoomId": 9000000000000000153,
+    "Name": "RecRally",
+    "Description": "RecRally",
+    "ImageName": "DefaultRoomImage.jpg",
+    "IsRRO": true,
+    "IsDorm": false,
+    "Accessibility": 1,
+    "MaxPlayers": 20,
+    "SubRooms": [
+      {
+        "Name": "Home",
+        "UnitySceneId": "56193568-9ae0-498c-8a77-4df79dec91f5",
+        "_SubRoomGuid": "522796ae-43c9-45b9-802f-a76837473f87"
+      }
+    ],
+    "Tags": [
+      {
+        "Tag": "rro",
+        "Type": 2
+      }
+    ],
+    "_RoomGuid": "f622abe8-72fd-44c3-b9c2-2d48c5f6d8c0",
+    "_IdSource": "synthetic"
+  },
+  {
+    "RoomId": 9000000000000000154,
+    "Name": "MakerRoom2",
+    "Description": "Maker Room 2",
+    "ImageName": "DefaultRoomImage.jpg",
+    "IsRRO": true,
+    "IsDorm": false,
+    "Accessibility": 1,
+    "MaxPlayers": 20,
+    "SubRooms": [
+      {
+        "Name": "Home",
+        "UnitySceneId": "5d4e40d8-f289-4295-a6e1-4f907835007d",
+        "_SubRoomGuid": "3b8b8edf-5303-48ea-ba31-640f7fd1e7e8"
+      }
+    ],
+    "Tags": [
+      {
+        "Tag": "rro",
+        "Type": 2
+      }
+    ],
+    "_RoomGuid": "fcbbeacc-a717-4a72-9243-1117ad2b56eb",
+    "_IdSource": "synthetic"
+  },
+  {
+    "RoomId": 9000000000000000155,
+    "Name": "CustomDormRoomTemplate",
+    "Description": "Custom Dorm Room",
+    "ImageName": "DefaultRoomImage.jpg",
+    "IsRRO": true,
+    "IsDorm": false,
+    "Accessibility": 0,
+    "MaxPlayers": 20,
+    "SubRooms": [
+      {
+        "Name": "Home",
+        "UnitySceneId": "1c92f780-baf1-4bd8-aa15-27cca0aa7396",
+        "_SubRoomGuid": "550c39a9-9767-4ab9-95ff-100f35bc817e"
+      }
+    ],
+    "Tags": [
+      {
+        "Tag": "rro",
+        "Type": 2
+      }
+    ],
+    "_RoomGuid": "12a68cc3-ed9f-478f-848a-cc2f906436c6",
+    "_IdSource": "synthetic"
   }
 ]

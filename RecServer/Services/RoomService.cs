@@ -80,7 +80,13 @@ public class RoomService
         r.PublishedAt ??= r.CreatedAt;
         r.RankedEntityId ??= r.RoomId.ToString();
         // notes such as "_archive" (where the import came from) are for people, not the client
-        foreach (var k in r.Extra?.Keys.Where(k => k.StartsWith('_')).ToList() ?? new()) r.Extra!.Remove(k);
+        StripNotes(r.Extra);
+        foreach (var s in r.SubRooms) StripNotes(s.Extra);
+    }
+
+    private static void StripNotes(Dictionary<string, JsonElement>? extra)
+    {
+        foreach (var k in extra?.Keys.Where(k => k.StartsWith('_')).ToList() ?? new()) extra!.Remove(k);
     }
 
     public IEnumerable<Room> All => _rooms.Values.OrderBy(r => r.Name, StringComparer.OrdinalIgnoreCase);

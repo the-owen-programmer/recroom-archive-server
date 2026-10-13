@@ -36,12 +36,24 @@ player-built rooms, a `DataBlob` (name of the saved room on cdn.rec.net):
 Archived room JSON never has SubRooms (the public API left them out). An imported room without them inherits the seed's
 sub-rooms for the same id, and a re-import keeps hand-added ones. Otherwise the server makes an empty "Home" sub-room.
 
-Seed entries (ids chosen to match real rooms where known):
-- `RecCenter`, id **170126** (real id from the archive), scene `cbad71af-0831-44d8-b8ef-69edafa841f6`
-- `DormRoom` (the local dorm), id 9000000000000000001 (outside the real id range), scene `76d98498-60a1-430c-ab76-b54a29b7a163`
+### Built-in rooms (seed)
+`Seed/rooms.json` holds **all 56 built-in (RRO) rooms of the 2024-08-20 build** and their 68 sub-rooms, with **verified scene
+GUIDs**. They were extracted from the build's own room build config (`AGRoomBuildConfig` in `RecRoom_Data/resources.assets`)
+by `tools/extract_builtin_rooms.py`:
+```
+python3 tools/rzip.py https://archive.recagain.site/download/manifest/1664414749991987435 get RecRoom_Data/resources.assets /tmp/resources.assets
+python3 tools/extract_builtin_rooms.py /tmp/resources.assets --seed RecServer/Seed/rooms.json --ids-from data/rooms
+```
+The config lists 42 scenes (display name → scene GUID), then each room (name + room GUID) with sub-rooms
+(name + sub-room GUID → scene GUID). Examples: DormRoom → `76d98498-…`, RecCenter → `cbad71af-…`, Park → `0a864c86-…`,
+Paintball with River/Homestead/Quarry/Clearcut/Spillway/Drive-in, LaserTag with Hangar/CyberJunkCity, StuntRunner with
+StuntRunner/TheMainEvent. The room and sub-room GUIDs are kept as `_RoomGuid`/`_SubRoomGuid` notes, which are stripped before
+anything is sent to the client.
 
-**Both scene GUIDs are UNVERIFIED.** They come from 2018-2020 community servers. The 2024 build's scene GUIDs must be read from
-the build (scene list / the client's RRO room table) and replaced here.
+RoomIds: RecCenter has its real id (170126, from the archive). The others use a reserved range from 9000000000000000100 up,
+far above real ids, until their real ids are imported. `tools/import_rooms.py wayback --name Park` brings in the archived
+room, which takes over the seed's sub-rooms by name (and its real id, stats and thumbnail).
+`DormRoom` is the local dorm (`IsDorm`); `/goto/dorm` sends the player there.
 
 ## Endpoints
 **rooms.rec.net**
@@ -81,7 +93,7 @@ per path.
 ## Open questions (need the client or its dump)
 1. The 2024 client's room, sub-room and room-instance class field names (casing included), and the exact rooms/match paths
    and `include` flags it requests.
-2. Scene GUIDs of the RRO rooms and dorm in the 2024 build.
+2. ~~Scene GUIDs of the built-in rooms~~: done, see above. Still open: whether the client wants the room/sub-room GUIDs anywhere.
 3. How a `.room` blob is fetched: the full cdn path, and whether it is compressed or versioned (`UgcVersion`, `PersistenceVersion`).
 4. **Photon.** Entering an instance means joining a Photon room. Offline, that needs either a local Photon-compatible server or
    a client patch for Photon offline mode. This is the next big blocker after matchmaking.
