@@ -260,6 +260,43 @@
           }
         }
       }
+    },
+    "/api/versioncheck/v4": {
+      "get": {
+        "tags": [
+          "VersionCheck (api.rec.net)"
+        ],
+        "summary": "Is this client version allowed to play? Client query: `?v=20240815.01&p=0&pid=0`.",
+        "description": "Client type `RecNet.VersionCheck.VersionCheckResponse`. `VersionStatus`: 0 ValidForPlay, 1 UpdateRequired.\n`UpdateNotificationStage`: 0 None, 1 Silent, 2 Warn, 3 Prompt, 4 Require. Always valid: the archived build is the only one.",
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/versioncheck/islandedversions": {
+      "get": {
+        "tags": [
+          "VersionCheck (api.rec.net)"
+        ],
+        "summary": "Versions that are \"islanded\" (kept apart from the main population). None.",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   "components": {
@@ -475,6 +512,9 @@
     },
     {
       "name": "Third-party: Statsig (statsigapi.net)"
+    },
+    {
+      "name": "VersionCheck (api.rec.net)"
     }
   ]
 }
