@@ -1,6 +1,15 @@
 bin/
 obj/
+.dotnet/
+logs/
+run/
 *.log
 *.out
-certs/key.pem
-certs/server.pfx
+*.key
+*.pfx
+*.srl
+ca.pem
+server.pem
+hosts.txt
+__pycache__/
+key.pem

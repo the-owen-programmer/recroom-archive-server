@@ -1,0 +1,455 @@
+{
+  "openapi": "3.0.4",
+  "info": {
+    "title": "Fake Rec Room backend",
+    "description": "Re-implementation of the RecNet services the Rec Room client talks to, reconstructed from the client's own code and from the requests it makes. Every *.rec.net host is served by this one process; the 'Host' column in each endpoint says which service name the client uses.",
+    "version": "v1"
+  },
+  "paths": {
+    "/generate_204": {
+      "get": {
+        "tags": [
+          "Connectivity (google.com)"
+        ],
+        "summary": "Internet reachability probe. Must answer 204 No Content.",
+        "responses": {
+          "204": {
+            "description": "No Content"
+          }
+        }
+      }
+    },
+    "/": {
+      "get": {
+        "tags": [
+          "Connectivity (google.com)"
+        ],
+        "summary": "Plain 200 for the bare host (the client also references `https://google.com`).",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      },
+      "head": {
+        "tags": [
+          "Connectivity (google.com)"
+        ],
+        "summary": "Plain 200 for the bare host (the client also references `https://google.com`).",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/_debug/requests": {
+      "get": {
+        "tags": [
+          "Debug"
+        ],
+        "summary": "The most recent requests the server saw (also appended to logs/requests.jsonl).",
+        "parameters": [
+          {
+            "name": "take",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 50
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/LoggedRequest"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/LoggedRequest"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/LoggedRequest"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/{path}": {
+      "get": {
+        "tags": [
+          "NameServer (ns.rec.net)"
+        ],
+        "summary": "List the base URL of every RecNet service.",
+        "description": "The client logs \"RecNet name server query failed\" and \"Failed to connect to RecNet (error code: summer)\" when this\ndoes not answer. The exact path the client requests is not known yet, so every GET on this host returns the table;\ncheck `logs/requests.jsonl` for what the client really sends.",
+        "parameters": [
+          {
+            "name": "path",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/NameServerResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NameServerResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NameServerResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Third-party: Unity cloud"
+        ],
+        "summary": "Accept any Unity cloud POST/GET with an empty JSON object.",
+        "parameters": [
+          {
+            "name": "path",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/v1/{call}": {
+      "post": {
+        "tags": [
+          "Third-party: RudderStack"
+        ],
+        "summary": "Accept any analytics call (track, identify, batch, webhook).",
+        "parameters": [
+          {
+            "name": "call",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/v1/initialize": {
+      "post": {
+        "tags": [
+          "Third-party: Statsig (statsigapi.net)"
+        ],
+        "summary": "Statsig SDK initialisation: the client's feature gates, dynamic configs and layers.",
+        "description": "Empty (\"everything off / default\") config. The client also logs \"Detected change in CdnKey from statsig\", so a dynamic config\nnamed after the CDN key may be needed later; the request body (user, statsigMetadata) is logged by the request log.",
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/v1/log_event": {
+      "post": {
+        "tags": [
+          "Third-party: Statsig (statsigapi.net)"
+        ],
+        "summary": "Statsig event upload.",
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "LoggedRequest": {
+        "type": "object",
+        "properties": {
+          "Time": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "Host": {
+            "type": "string",
+            "nullable": true
+          },
+          "Method": {
+            "type": "string",
+            "nullable": true
+          },
+          "Path": {
+            "type": "string",
+            "nullable": true
+          },
+          "Query": {
+            "type": "string",
+            "nullable": true
+          },
+          "ContentType": {
+            "type": "string",
+            "nullable": true
+          },
+          "UserAgent": {
+            "type": "string",
+            "nullable": true
+          },
+          "Headers": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "string"
+            },
+            "nullable": true
+          },
+          "Body": {
+            "type": "string",
+            "nullable": true
+          },
+          "Status": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "Handled": {
+            "type": "boolean"
+          }
+        },
+        "additionalProperties": false,
+        "description": "One request seen by the server (kept in memory and appended to requests.jsonl)."
+      },
+      "NameServerResponse": {
+        "type": "object",
+        "properties": {
+          "RecNetStatus": {
+            "type": "string",
+            "nullable": true
+          },
+          "AI": {
+            "type": "string",
+            "nullable": true
+          },
+          "Auth": {
+            "type": "string",
+            "nullable": true
+          },
+          "API": {
+            "type": "string",
+            "nullable": true
+          },
+          "WWW": {
+            "type": "string",
+            "nullable": true
+          },
+          "Notifications": {
+            "type": "string",
+            "nullable": true
+          },
+          "Images": {
+            "type": "string",
+            "nullable": true
+          },
+          "CDN": {
+            "type": "string",
+            "nullable": true
+          },
+          "Commerce": {
+            "type": "string",
+            "nullable": true
+          },
+          "Matchmaking": {
+            "type": "string",
+            "nullable": true
+          },
+          "Storage": {
+            "type": "string",
+            "nullable": true
+          },
+          "Chat": {
+            "type": "string",
+            "nullable": true
+          },
+          "Leaderboard": {
+            "type": "string",
+            "nullable": true
+          },
+          "Accounts": {
+            "type": "string",
+            "nullable": true
+          },
+          "Link": {
+            "type": "string",
+            "nullable": true
+          },
+          "Lists": {
+            "type": "string",
+            "nullable": true
+          },
+          "RoomComments": {
+            "type": "string",
+            "nullable": true
+          },
+          "Clubs": {
+            "type": "string",
+            "nullable": true
+          },
+          "Rooms": {
+            "type": "string",
+            "nullable": true
+          },
+          "PlatformNotifications": {
+            "type": "string",
+            "nullable": true
+          },
+          "Moderation": {
+            "type": "string",
+            "nullable": true
+          },
+          "DataCollection": {
+            "type": "string",
+            "nullable": true
+          },
+          "BugReporting": {
+            "type": "string",
+            "nullable": true
+          },
+          "Discovery": {
+            "type": "string",
+            "nullable": true
+          },
+          "PlayerSettings": {
+            "type": "string",
+            "nullable": true
+          },
+          "Studio": {
+            "type": "string",
+            "nullable": true
+          },
+          "GameLogs": {
+            "type": "string",
+            "nullable": true
+          },
+          "Strings": {
+            "type": "string",
+            "nullable": true
+          },
+          "Econ": {
+            "type": "string",
+            "nullable": true
+          },
+          "StringsCDN": {
+            "type": "string",
+            "nullable": true
+          },
+          "Data": {
+            "type": "string",
+            "nullable": true
+          },
+          "Cards": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "What the name server (`ns.rec.net`) returns: the base URL of every other RecNet service.\nField names are those of the client's `RecNet.Core.NameServerResponse` class; the client deserialises them\ncase-sensitively, so do not rename."
+      }
+    }
+  },
+  "tags": [
+    {
+      "name": "Connectivity (google.com)"
+    },
+    {
+      "name": "Debug"
+    },
+    {
+      "name": "NameServer (ns.rec.net)"
+    },
+    {
+      "name": "Third-party: Unity cloud"
+    },
+    {
+      "name": "Third-party: RudderStack"
+    },
+    {
+      "name": "Third-party: Statsig (statsigapi.net)"
+    }
+  ]
+}
