@@ -14,7 +14,7 @@ namespace RecServer.Controllers;
 [Host("match.rec.net")]
 [Tags("Matchmaking (match.rec.net)")]
 [Produces("application/json")]
-public class MatchController : ControllerBase
+public class MatchController : ControllerBase, Microsoft.AspNetCore.Mvc.Filters.IActionFilter
 {
     /// <summary>Not found: no room with that name.</summary>
     public const int ErrorNoSuchRoom = 1;
@@ -84,12 +84,13 @@ public class MatchController : ControllerBase
     public ActionResult<RoomInstance> Instance(long id) =>
         _presence.Current is { } cur && cur.RoomInstanceId == id ? cur : NotFound();
 
-    public override void OnActionExecuted(Microsoft.AspNetCore.Mvc.Filters.ActionExecutedContext context)
+    public void OnActionExecuting(Microsoft.AspNetCore.Mvc.Filters.ActionExecutingContext context) { }
+
+    public void OnActionExecuted(Microsoft.AspNetCore.Mvc.Filters.ActionExecutedContext context)
     {
         if (context.Result is ObjectResult { Value: MatchmakingResponse m } && Request.HasFormContentType
             && Request.Form.TryGetValue("CorrelationId", out var cid) && !string.IsNullOrEmpty(cid))
             m.CorrelationId = cid.ToString();
-        base.OnActionExecuted(context);
     }
 
     private MatchmakingResponse Enter(Room room, string? subRoom)
