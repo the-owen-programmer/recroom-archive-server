@@ -34,8 +34,11 @@ public class RoomService
         void Add(JsonElement e, string source)
         {
             if (e.ValueKind == JsonValueKind.Array) { foreach (var x in e.EnumerateArray()) Add(x, source); return; }
-            var room = e.Deserialize<Room>(DataStore.Json);
-            if (room == null || room.RoomId == 0 || room.Name.Length == 0) { Console.WriteLine($"{source}: room without RoomId/Name skipped"); return; }
+            Room? room;
+            try { room = e.Deserialize<Room>(DataStore.Json); }
+            catch (JsonException ex) { Console.WriteLine($"{source}: room skipped ({ex.Message})"); return; }
+            if (room == null || room.RoomId == 0 || string.IsNullOrEmpty(room.Name)) { Console.WriteLine($"{source}: room without RoomId/Name skipped"); return; }
+            FillNulls(room);
             // archived dumps have no sub-rooms: keep the scene info an earlier source (the seed, a hand-made file) had for the
             // same RoomId, or else for a built-in room of the same name (whose seed entry it then replaces)
             if (room.SubRooms.Count == 0)
@@ -63,6 +66,22 @@ public class RoomService
         }
         _rooms = rooms;
         Console.WriteLine($"room catalog: {rooms.Count} rooms");
+    }
+
+    /// <summary>Archived JSON may carry explicit nulls ("Description": null) that override the model's defaults.</summary>
+    private static void FillNulls(Room r)
+    {
+        r.Description ??= "";
+        r.ImageName ??= "DefaultRoomImage.jpg";
+        r.Stats ??= new RoomStats();
+        r.SubRooms ??= new();
+        r.Roles ??= new();
+        r.Tags ??= new();
+        r.PromoImages ??= new();
+        r.PromoExternalContent ??= new();
+        r.LoadScreens ??= new();
+        foreach (var s in r.SubRooms) s.Name ??= "Home";
+        r.Tags.RemoveAll(t => t?.Tag == null);
     }
 
     /// <summary>Fill the parts archived room dumps usually lack (the public API leaves out sub-rooms and roles).</summary>

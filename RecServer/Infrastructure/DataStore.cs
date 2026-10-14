@@ -15,7 +15,12 @@ namespace RecServer.Infrastructure;
 /// </summary>
 public class DataStore
 {
-    public static readonly JsonSerializerOptions Json = new() { WriteIndented = true, PropertyNamingPolicy = null };
+    /// <summary>Archived dumps sometimes write ids as strings ("RoomId": "170126"); those are read as numbers too.</summary>
+    public static readonly JsonSerializerOptions Json = new()
+    {
+        WriteIndented = true, PropertyNamingPolicy = null,
+        NumberHandling = System.Text.Json.Serialization.JsonNumberHandling.AllowReadingFromString,
+    };
     private readonly object _lock = new();
 
     public string Root { get; }
