@@ -84,8 +84,44 @@ app.UseSwagger();
 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Fake Rec Room backend v1"));
 app.MapControllers();
 // Anything the client asks for that is not implemented yet: log it (RequestLogMiddleware) and answer 404.
+// Endpoints the 2024 client calls after matchmaking that we do not model yet: empty-but-valid answers so it keeps going.
+// Bodies are GUESSES (shapes unverified); when the client rejects one, replace it with a real controller. Keyed by "host path-regex".
+var stubs = new (string Host, System.Text.RegularExpressions.Regex Path, string Body)[]
+{
+    ("cdn.rec.net", new(@"^/config/LoadingScreenTipData$"), "[]"),
+    ("api.rec.net", new(@"^/api/quickPlay/v1/getandclear$"), "[]"),
+    ("api.rec.net", new(@"^/api/config/v1/backtrace$"), "{}"),
+    ("api.rec.net", new(@"^/api/config/v1/azurespeech$"), "{}"),
+    ("api.rec.net", new(@"^/api/PlayerReporting/v1/voteToKickReasons$"), "[]"),
+    ("api.rec.net", new(@"^/outfits/me/saved$"), "{\"Outfits\":[]}"),
+    ("api.rec.net", new(@"^/api/images/v2/named$"), "[]"),
+    ("api.rec.net", new(@"^/api/communityboard/v2/current$"), "{}"),
+    ("api.rec.net", new(@"^/api/playerevents/v1/all$"), "[]"),
+    ("api.rec.net", new(@"^/api/customAvatarItems/v1/isRenderingEnabled$"), "true"),
+    ("api.rec.net", new(@"^/api/customAvatarItems/v1/isCreationEnabled$"), "false"),
+    ("lists.rec.net", new(@"^/contextualfeatures$"), "{}"),
+    ("cards.rec.net", new(@"^/iam/me/channels/.*$"), "[]"),
+    ("moderation.rec.net", new(@"^/voice/config$"), "{}"),
+    ("match.rec.net", new(@"^/player/statusvisibility$"), "{}"),
+    ("rooms.rec.net", new(@"^/rooms/\d+/experience/player$"), "{}"),
+    ("rooms.rec.net", new(@"^/rooms/\d+/playerdata/me$"), "{}"),
+    ("econ.rec.net", new(@"^/api/(ugcPurchasables/v1/items/room/\d+|roomcurrencies/v1/currencies|roomconsumables/v1/roomConsumable/room/\d+|consumables/v2/getUnlocked|equipment/v2/getUnlocked|avatar/v2/gifts|gamerewards/v1/pending|roomkeys/v1/(mine|room)|storefronts/v4/balance/\d+)$"), "[]"),
+    ("econ.rec.net", new(@"^/api/objectives/v1/myprogress$"), "{\"Objectives\":[],\"ObjectiveGroups\":[]}"),
+    ("econ.rec.net", new(@"^/api/(CampusCard/v1/UpdateAndGetSubscription|subscriptionseasons/v1/seasons/current)$"), "{}"),
+    ("econ.rec.net", new(@"^/econ/(roomInventory/room/\d+(/player)?|roomGiftDropShops/room/\d+|roomInventoryItemTags/room/\d+|roomOffer/room/\d+(/purchaseCounts)?)$"), "[]"),
+    ("econ.rec.net", new(@"^/econ/roomEconConfig/\d+$"), "{}"),
+};
 app.MapFallback(async ctx =>
 {
+    var host = ctx.Request.Host.Host;
+    foreach (var (h, rx, body) in stubs)
+        if (string.Equals(h, host, StringComparison.OrdinalIgnoreCase) && rx.IsMatch(ctx.Request.Path.Value ?? ""))
+        {
+            ctx.Response.StatusCode = 200;
+            ctx.Response.ContentType = "application/json";
+            await ctx.Response.WriteAsync(body);
+            return;
+        }
     ctx.Response.StatusCode = 404;
     ctx.Response.ContentType = "application/json";
     await ctx.Response.WriteAsync("{\"error\":\"not implemented\"}");
