@@ -8,7 +8,7 @@ namespace RecServer.Controllers;
 /// <summary>
 /// Matchmaking, host <c>match.rec.net</c>: putting the player into a room instance and reporting where they are. Offline there is
 /// only ever one player, so every <c>goto</c> creates a fresh private instance. Login/logout stay with the startup chain.
-/// Paths and shapes follow older RecNet matchmaking (2021-23); unverified against the 2024 client.
+/// The 2024 client posts form bodies to /matchmake/{none,dorm,...} (seen in requests.jsonl); /goto/... are kept as aliases from older RecNet. Response shape is still unverified.
 /// </summary>
 [ApiController]
 [Host("match.rec.net")]
@@ -26,6 +26,7 @@ public class MatchController : ControllerBase
 
     /// <summary>Go to a room by name (<c>RecCenter</c>, or <c>RecCenter.SubRoom</c> for a sub-room).</summary>
     [HttpPost("/goto/room/{roomName}")]
+    [HttpPost("/matchmake/room/{roomName}")]
     [HttpGet("/goto/room/{roomName}")]
     public MatchmakingResponse GotoRoom(string roomName)
     {
@@ -35,26 +36,31 @@ public class MatchController : ControllerBase
 
     /// <summary>Go to a room by id.</summary>
     [HttpPost("/goto/roomid/{roomId:long}")]
+    [HttpPost("/matchmake/roomid/{roomId:long}")]
     public MatchmakingResponse GotoRoomId(long roomId) =>
         _rooms.Get(roomId) is { } room ? Enter(room, null) : new MatchmakingResponse { ErrorCode = ErrorNoSuchRoom };
 
     /// <summary>Re-join the current instance (the only instance that exists).</summary>
     [HttpPost("/goto/roominstance/{instanceId:long}")]
+    [HttpPost("/matchmake/roominstance/{instanceId:long}")]
     public MatchmakingResponse GotoInstance(long instanceId) =>
         _presence.Current is { } cur && cur.RoomInstanceId == instanceId ? new MatchmakingResponse { RoomInstance = cur } : GotoDorm();
 
     /// <summary>"Join player": offline the only player is you, so this lands in your current room or dorm.</summary>
     [HttpPost("/goto/player/{playerId:int}")]
+    [HttpPost("/matchmake/player/{playerId:int}")]
     public MatchmakingResponse GotoPlayer(int playerId) =>
         _presence.Current is { } cur ? new MatchmakingResponse { RoomInstance = cur } : GotoDorm();
 
     /// <summary>Go home.</summary>
     [HttpPost("/goto/dorm")]
+    [HttpPost("/matchmake/dorm")]
     public MatchmakingResponse GotoDorm() =>
         _rooms.Dorm is { } dorm ? Enter(dorm, null) : new MatchmakingResponse { ErrorCode = ErrorNoSuchRoom };
 
     /// <summary>Leave the room (back to the title / loading screen).</summary>
     [HttpPost("/goto/none")]
+    [HttpPost("/matchmake/none")]
     public MatchmakingResponse GotoNone() { _presence.Enter(null); return new MatchmakingResponse(); }
 
     /// <summary>Presence keep-alive while in game; returns where the player is.</summary>

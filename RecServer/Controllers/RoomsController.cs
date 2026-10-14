@@ -82,6 +82,7 @@ public class RoomsController : ControllerBase
     /// <summary>The local player's dorm room.</summary>
     [HttpGet("/rooms/dorm")]
     [HttpGet("/rooms/dorm/me")]
+    [HttpGet("/dormroom/me")]
     public ActionResult<Room> Dorm() => _rooms.Dorm is { } r ? r : NotFound();
 
     /// <summary>Whether the local player cheered / favorited this room.</summary>
