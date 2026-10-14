@@ -84,8 +84,10 @@ public class MatchController : ControllerBase, Microsoft.AspNetCore.Mvc.Filters.
     public ActionResult<RoomInstance> Instance(long id) =>
         _presence.Current is { } cur && cur.RoomInstanceId == id ? cur : NotFound();
 
+    [NonAction]
     public void OnActionExecuting(Microsoft.AspNetCore.Mvc.Filters.ActionExecutingContext context) { }
 
+    [NonAction]
     public void OnActionExecuted(Microsoft.AspNetCore.Mvc.Filters.ActionExecutedContext context)
     {
         if (context.Result is ObjectResult { Value: MatchmakingResponse m } && Request.HasFormContentType
