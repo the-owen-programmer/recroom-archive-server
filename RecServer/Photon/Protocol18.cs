@@ -45,6 +45,9 @@ public static class Protocol18
         public byte U8() => _b[Pos++];
         public short I16() { var v = (short)(_b[Pos] | _b[Pos + 1] << 8); Pos += 2; return v; }
         public ushort U16() { var v = (ushort)(_b[Pos] | _b[Pos + 1] << 8); Pos += 2; return v; }
+        /// <summary>Skip n bytes. A method, so a length read in the argument happens before Pos is read
+        /// (`Pos += ReadLength()` would add to the old Pos).</summary>
+        private void Advance(int n) => Pos += n;
         public byte[] Bytes(int n) { var r = _b.AsSpan(Pos, n).ToArray(); Pos += n; return r; }
 
         public uint VarU32()
@@ -156,7 +159,7 @@ public static class Protocol18
         /// <summary>Advance past a value of the given type without building it.</summary>
         public void Skip(byte type)
         {
-            if (type >= CustomTypeSlim && type <= 228) { Pos += (int)VarU32(); return; }
+            if (type >= CustomTypeSlim && type <= 228) { Advance((int)VarU32()); return; }
             switch (type)
             {
                 case Null: case BooleanTrue: case BooleanFalse: case ByteZero: case ShortZero: case FloatZero:
@@ -167,19 +170,19 @@ public static class Protocol18
                 case Double: Pos += 8; return;
                 case CompressedInt: VarU32(); return;
                 case CompressedLong: VarU64(); return;
-                case String: case ByteArray: Pos += (int)VarU32(); return;
-                case Custom: Pos += 1; Pos += (int)VarU32(); return;
+                case String: case ByteArray: Advance((int)VarU32()); return;
+                case Custom: Pos += 1; Advance((int)VarU32()); return;
                 case Hashtable: { int n = (int)VarU32(); for (int i = 0; i < 2 * n; i++) Skip(U8()); return; }
                 case ObjectArray: { int n = (int)VarU32(); for (int i = 0; i < n; i++) Skip(U8()); return; }
                 case BooleanArray: { int n = (int)VarU32(); Pos += (n + 7) / 8; return; }
-                case ShortArray: Pos += 2 * (int)VarU32(); return;
-                case FloatArray: Pos += 4 * (int)VarU32(); return;
-                case DoubleArray: Pos += 8 * (int)VarU32(); return;
-                case StringArray: { int n = (int)VarU32(); for (int i = 0; i < n; i++) Pos += (int)VarU32(); return; }
+                case ShortArray: Advance(2 * (int)VarU32()); return;
+                case FloatArray: Advance(4 * (int)VarU32()); return;
+                case DoubleArray: Advance(8 * (int)VarU32()); return;
+                case StringArray: { int n = (int)VarU32(); for (int i = 0; i < n; i++) Advance((int)VarU32()); return; }
                 case CompressedIntArray: { int n = (int)VarU32(); for (int i = 0; i < n; i++) VarU32(); return; }
                 case CompressedLongArray: { int n = (int)VarU32(); for (int i = 0; i < n; i++) VarU64(); return; }
                 case HashtableArray: { int n = (int)VarU32(); for (int i = 0; i < n; i++) Skip(Hashtable); return; }
-                case CustomTypeArray: { int n = (int)VarU32(); Pos += 1; for (int i = 0; i < n; i++) Pos += (int)VarU32(); return; }
+                case CustomTypeArray: { int n = (int)VarU32(); Pos += 1; for (int i = 0; i < n; i++) Advance((int)VarU32()); return; }
                 case Dictionary: { var (k, v) = DictTypes(); SkipDictElements(k, v); return; }
                 case DictionaryArray: { var (k, v) = DictTypes(); int n = (int)VarU32(); for (int i = 0; i < n; i++) SkipDictElements(k, v); return; }
                 case Array:

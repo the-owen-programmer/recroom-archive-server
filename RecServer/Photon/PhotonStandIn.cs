@@ -79,7 +79,11 @@ public sealed class PhotonStandIn : IDisposable
     private Task OnMessage(UdpPeer peer, byte[] m)
     {
         try { Handle(peer, m); }
-        catch (Exception e) { _log($"{peer.Role} peer {peer.PeerId}: message failed: {e.Message}"); }
+        catch (Exception e)
+        {
+            // the raw bytes are the only way to see what the parser did not understand
+            _log($"{peer.Role} peer {peer.PeerId}: message failed: {e.Message}; {m.Length} bytes: {Convert.ToHexString(m.AsSpan(0, Math.Min(m.Length, 256)))}");
+        }
         return Task.CompletedTask;
     }
 

@@ -27,6 +27,9 @@ public static class Protocol16
         public int I32() { var v = BinaryPrimitives.ReadInt32BigEndian(_b.AsSpan(Pos)); Pos += 4; return v; }
         public long I64() { var v = BinaryPrimitives.ReadInt64BigEndian(_b.AsSpan(Pos)); Pos += 8; return v; }
         public string Str() { int n = (ushort)I16(); var s = Encoding.UTF8.GetString(_b, Pos, n); Pos += n; return s; }
+        /// <summary>Skip n bytes. A method, so a length read in the argument happens before Pos is read
+        /// (`Pos += ReadLength()` would add to the old Pos).</summary>
+        private void Advance(int n) => Pos += n;
         public byte[] Bytes(int n) { var r = _b.AsSpan(Pos, n).ToArray(); Pos += n; return r; }
 
         public object? Value() => Value(U8());
@@ -79,13 +82,13 @@ public static class Protocol16
                 case Short: Pos += 2; return;
                 case Integer: case Float: Pos += 4; return;
                 case Long: case Double: Pos += 8; return;
-                case String: Pos += (ushort)I16(); return;
-                case ByteArray: Pos += I32(); return;
-                case IntArray: Pos += 4 * I32(); return;
-                case StringArray: { int n = I16(); for (int i = 0; i < n; i++) Pos += (ushort)I16(); return; }
+                case String: Advance((ushort)I16()); return;
+                case ByteArray: Advance(I32()); return;
+                case IntArray: Advance(4 * I32()); return;
+                case StringArray: { int n = I16(); for (int i = 0; i < n; i++) Advance((ushort)I16()); return; }
                 case ObjectArray: { int n = I16(); for (int i = 0; i < n; i++) Skip(U8()); return; }
                 case Hashtable: { int n = I16(); for (int i = 0; i < 2 * n; i++) Skip(U8()); return; }
-                case Custom: Pos += 1; Pos += (ushort)I16(); return;
+                case Custom: Pos += 1; Advance((ushort)I16()); return;
                 case Dictionary: { byte k = U8(), v = U8(); SkipDictBody(k, v); return; }
                 case Array: SkipArrayBody(I16()); return;
                 case EventData: U8(); SkipParams(); return;
@@ -112,10 +115,10 @@ public static class Protocol16
             switch (t)
             {
                 case Array: for (int i = 0; i < n; i++) SkipArrayBody(I16()); return;
-                case ByteArray: for (int i = 0; i < n; i++) Pos += I32(); return;
+                case ByteArray: for (int i = 0; i < n; i++) Advance(I32()); return;
                 case Byte: Pos += n; return;
                 case Integer: Pos += 4 * n; return;
-                case Custom: Pos += 1; for (int i = 0; i < n; i++) Pos += (ushort)I16(); return;
+                case Custom: Pos += 1; for (int i = 0; i < n; i++) Advance((ushort)I16()); return;
                 case Dictionary:
                 {
                     byte k = U8(), v = U8();
