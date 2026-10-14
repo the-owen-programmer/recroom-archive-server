@@ -90,7 +90,7 @@ var stubs = new (string Host, System.Text.RegularExpressions.Regex Path, string 
 {
     ("cdn.rec.net", new(@"^/config/LoadingScreenTipData$"), "[]"),
     // quickPlay/getandclear: a bare 404 is tolerated; [] and {} were both rejected as malformed, so leave it unimplemented
-    ("api.rec.net", new(@"^/api/config/v1/backtrace$"), "{}"),
+    // config/v1/backtrace: {} and 0 were both rejected as malformed (and it precedes "Error initializing Core Systems"); a 404 is tolerated, so leave it
     ("api.rec.net", new(@"^/api/config/v1/azurespeech$"), "{}"),
     ("api.rec.net", new(@"^/api/PlayerReporting/v1/voteToKickReasons$"), "[]"),
     ("api.rec.net", new(@"^/outfits/me/saved$"), "[]"),
