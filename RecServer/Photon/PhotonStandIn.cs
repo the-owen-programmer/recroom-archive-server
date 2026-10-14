@@ -50,6 +50,8 @@ public sealed class PhotonStandIn : IDisposable
         public PhotonCrypto? Crypto;
         public Room? Room;
         public string UserId = "";
+        /// <summary>GpBinaryV16 instead of V18, as the client announced in its init message.</summary>
+        public bool V16;
     }
 
     /// <param name="host">Address the client is sent to for master and game servers (it runs on the same machine).</param>
@@ -92,19 +94,20 @@ public sealed class PhotonStandIn : IDisposable
             case 0:   // Init: protocol version in bytes 2-3 (1.8 = GpBinaryV18), client version, app id
             {
                 string app = System.Text.Encoding.ASCII.GetString(m, 9, Math.Min(32, m.Length - 9)).TrimEnd('\0');
-                _log($"{peer.Role} peer {peer.PeerId}: init protocol {m[2]}.{m[3]} app {app}");
-                if (m[3] != 8) _log($"  WARNING: serialization protocol {m[2]}.{m[3]} is not 1.8; only GpBinaryV18 is implemented");
+                s.V16 = m[3] == 6;
+                _log($"{peer.Role} peer {peer.PeerId}: init protocol {m[2]}.{m[3]} ({(s.V16 ? "GpBinaryV16" : "GpBinaryV18")}) app {app}");
+                if (m[3] is not (6 or 8)) _log($"  WARNING: unknown serialization protocol {m[2]}.{m[3]}; treating it as GpBinaryV18");
                 peer.SendReliable(new byte[] { 0xF3, 1, 0, 0 });   // InitResponse
                 return;
             }
             case 6:   // internal operation: key exchange
             {
-                var op = Protocol18.ReadOperationRequest(m, 2);
+                var op = Read(s, m, 2);
                 if (op.Code == 0 && op.Parameters.TryGetValue(1, out var key) && key is byte[] clientKey)
                 {
                     s.Crypto = new PhotonCrypto(clientKey);
                     _log($"{peer.Role} peer {peer.PeerId}: key exchange ({clientKey.Length}-byte client key)");
-                    Send(peer, 7, Protocol18.OperationResponse(0, 0, null, new() { [1] = s.Crypto.ServerPublicKey }));
+                    Send(peer, 7, ResponseBody(s, 0, 0, new() { [1] = s.Crypto.ServerPublicKey }));
                 }
                 else _log($"{peer.Role} peer {peer.PeerId}: internal operation {op.Code} ignored");
                 return;
@@ -116,9 +119,9 @@ public sealed class PhotonStandIn : IDisposable
                 {
                     if (s.Crypto == null) { _log($"{peer.Role} peer {peer.PeerId}: encrypted operation before key exchange"); return; }
                     var plain = s.Crypto.Decrypt(m, 2, m.Length - 2);
-                    op = Protocol18.ReadOperationRequest(plain, 0);
+                    op = Read(s, plain, 0);
                 }
-                else op = Protocol18.ReadOperationRequest(m, 2);
+                else op = Read(s, m, 2);
                 _log($"{peer.Role} peer {peer.PeerId}: op {op.Code}{(encrypted ? " (encrypted)" : "")} {Describe(op.Parameters)}");
                 Operation(peer, s, op);
                 return;
@@ -281,14 +284,22 @@ public sealed class PhotonStandIn : IDisposable
     private void Respond(UdpPeer peer, byte code, Dictionary<byte, object?>? parameters, short returnCode = 0)
     {
         _log($"  <- response {code} rc {returnCode} {Describe(parameters)}");
-        Send(peer, 3, Protocol18.OperationResponse(code, returnCode, null, parameters));
+        Send(peer, 3, ResponseBody(Sess(peer), code, returnCode, parameters));
     }
 
     private void Event(UdpPeer peer, byte code, Dictionary<byte, object?> parameters)
     {
         _log($"  <- event {code} {Describe(parameters)}");
-        Send(peer, 4, Protocol18.Event(code, parameters));
+        Send(peer, 4, Sess(peer).V16 ? Protocol16.EventBody(code, parameters) : Protocol18.Event(code, parameters));
     }
+
+    private static Session Sess(UdpPeer peer) => (Session)(peer.AppState ??= new Session());
+
+    private static OperationRequest Read(Session s, byte[] data, int offset) =>
+        s.V16 ? Protocol16.ReadOperationRequest(data, offset) : Protocol18.ReadOperationRequest(data, offset);
+
+    private static byte[] ResponseBody(Session s, byte code, short returnCode, Dictionary<byte, object?>? parameters) =>
+        s.V16 ? Protocol16.OperationResponseBody(code, returnCode, null, parameters) : Protocol18.OperationResponse(code, returnCode, null, parameters);
 
     private static void Send(UdpPeer peer, byte messageType, byte[] body)
     {
