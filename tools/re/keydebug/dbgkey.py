@@ -1,7 +1,7 @@
 import gdb
 
 TARGET = 0x180a49fe0
-OUT = "/tmp/claude-1000/-home-owen-Documents-recroom/1dc3b540-7028-41ba-af93-439db1d6e61b/scratchpad/arg_%s.bin"
+OUT = "/home/owen/Documents/recroom/fakeserver/tools/re/keydebug/out/arg_%s.bin"
 waiting = {'done': False}
 
 def mapped(addr):
@@ -38,7 +38,7 @@ def on_stop(event):
         return
     if pc == TARGET:
         dump_key(frame)
-        gdb.execute("continue")
+        gdb.post_event(lambda: gdb.execute("continue"))
         return
     if not waiting['done'] and mapped(TARGET):
         waiting['done'] = True
@@ -47,13 +47,17 @@ def on_stop(event):
             if bp.location in ("mmap", "mprotect"):
                 bp.delete()
         gdb.execute("break *0x%x" % TARGET)
-    gdb.execute("continue")
+    gdb.post_event(lambda: gdb.execute("continue"))
 
 gdb.execute("set pagination off")
 gdb.execute("set confirm off")
 gdb.execute("set breakpoint pending on")
 gdb.execute("handle SIGSEGV nostop noprint pass")
 gdb.execute("handle SIGILL nostop noprint pass")
+gdb.execute("handle SIGUSR1 nostop noprint pass")
+gdb.execute("handle SIGUSR2 nostop noprint pass")
+gdb.execute("handle SIGALRM nostop noprint pass")
+gdb.execute("handle SIG34 nostop noprint pass")
 gdb.execute("break mmap")
 gdb.execute("break mprotect")
 gdb.events.stop.connect(on_stop)

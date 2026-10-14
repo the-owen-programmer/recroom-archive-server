@@ -8,7 +8,7 @@
 #   env: BUILD=builds/2024-08-20  (game directory, relative to the project root)
 #        HEADLESS=1  run the game on a private virtual display (Xvfb) so nothing can interact with its window
 set -u
-HERE="$(cd "$(dirname "$0")" && pwd)"
+HERE="$(cd "$(dirname "$0")/../../.." && pwd)"
 ROOT="$(cd "$HERE/.." && pwd)"
 SECS="${1:-90}"
 PFX="${2:-${WINEPREFIX:-$ROOT/work/wineprefix}}"
@@ -39,7 +39,7 @@ exec unshare -rmn env HERE="$HERE" ROOT="$ROOT" SECS="$SECS" PFX="$PFX" BUILD="$
   cd "$ROOT/$BUILD"
   export WINEPREFIX="$PFX" WINEDEBUG="$REC_WINEDEBUG"
   if [ "$HEADLESS" = 1 ]; then Xvfb :99 -screen 0 1280x720x24 >/dev/null 2>&1 & XV=$!; sleep 1; export DISPLAY=:99; unset WAYLAND_DISPLAY; fi
-  timeout "$SECS" gdb -q -nx -batch -x /tmp/claude-1000/-home-owen-Documents-recroom/1dc3b540-7028-41ba-af93-439db1d6e61b/scratchpad/dbgkey.py --args wine RecRoom.exe > "$HERE/logs/game-wine.out" 2> /tmp/claude-1000/-home-owen-Documents-recroom/1dc3b540-7028-41ba-af93-439db1d6e61b/scratchpad/gdb.out
+  timeout "$SECS" gdb -q -nx -batch -x $HERE/tools/re/keydebug/dbgkey.py --args wine RecRoom.exe > "$HERE/logs/game-wine.out" 2> $HERE/tools/re/keydebug/out/gdb.out
   echo "game exited ($?)"
   wineserver -k 2>/dev/null
   kill $SRV $DNS $XV 2>/dev/null; wait $SRV 2>/dev/null

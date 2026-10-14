@@ -16,3 +16,4 @@ key.pem
 # local archive content and server state (see docs/worlds.md)
 data/*
 !data/README.md
+tools/re/keydebug/out/
