@@ -79,10 +79,13 @@ public class RoomsController : ControllerBase
     [HttpGet("/rooms/base")]
     public IEnumerable<Room> Base() => _rooms.All.Where(r => r.IsRRO && !r.IsDorm);
 
+    /// <summary>The 2024 client expects a bare number here (it parsed the room object as "expected Number Token"): the dorm room's id, which it then fetches by id.</summary>
+    [HttpGet("/dormroom/me")]
+    public ActionResult<long> DormRoomId() => _rooms.Dorm is { } r ? r.RoomId : NotFound();
+
     /// <summary>The local player's dorm room.</summary>
     [HttpGet("/rooms/dorm")]
     [HttpGet("/rooms/dorm/me")]
-    [HttpGet("/dormroom/me")]
     public ActionResult<Room> Dorm() => _rooms.Dorm is { } r ? r : NotFound();
 
     /// <summary>Whether the local player cheered / favorited this room.</summary>
@@ -110,3 +113,4 @@ public class RoomsController : ControllerBase
         return new { Results = list.Skip(skip).Take(Math.Clamp(take, 1, 500)), TotalResults = list.Count };
     }
 }
+

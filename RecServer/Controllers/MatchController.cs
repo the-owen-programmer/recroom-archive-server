@@ -84,6 +84,14 @@ public class MatchController : ControllerBase
     public ActionResult<RoomInstance> Instance(long id) =>
         _presence.Current is { } cur && cur.RoomInstanceId == id ? cur : NotFound();
 
+    public override void OnActionExecuted(Microsoft.AspNetCore.Mvc.Filters.ActionExecutedContext context)
+    {
+        if (context.Result is ObjectResult { Value: MatchmakingResponse m } && Request.HasFormContentType
+            && Request.Form.TryGetValue("CorrelationId", out var cid) && !string.IsNullOrEmpty(cid))
+            m.CorrelationId = cid.ToString();
+        base.OnActionExecuted(context);
+    }
+
     private MatchmakingResponse Enter(Room room, string? subRoom)
     {
         var instance = _rooms.Instantiate(room, subRoom);

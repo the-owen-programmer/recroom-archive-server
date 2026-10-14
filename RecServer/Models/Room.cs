@@ -156,5 +156,7 @@ public class MatchmakingResponse
     /// <summary>0 = success.</summary>
     [JsonPropertyName("errorCode")] public int ErrorCode { get; set; }
     [JsonPropertyName("roomInstance")] public RoomInstance? RoomInstance { get; set; }
+    /// <summary>Echo of the CorrelationId the client posted; the 2024 client rejects the response ("Invalid correlation ID") if it is missing.</summary>
+    [JsonPropertyName("correlationId")] public string? CorrelationId { get; set; }
 }
 
