@@ -17,3 +17,4 @@ key.pem
 data/*
 !data/README.md
 tools/re/keydebug/out/
+certs/content-sign-private.pem

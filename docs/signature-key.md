@@ -5,6 +5,13 @@
 - **Verified:** all 9,877 signatures in the shipped `RecRoom_Data/verification.sig` decrypt (`sig^e mod n`) to valid PKCS#1 v1.5 padding with a SHA-256 `DigestInfo` (`3031300d060960864801650304020105000420 || hash`).
 - **Not yet known:** what exactly is hashed. SHA-256 of the raw file, with/without the path (several orderings/encodings), does not reproduce the digest for `Plugins\Steamworks.NET.txt`. Needs the code in `DFLPDGILBGO.PNGODJMAFFD` (VA `0x180a4a590`) read for how the hashed buffer is built.
 
+## UPDATE: the key IS plain data in global-metadata.dat, so swapping it is a data patch
+- In the shipped (and patched) `RecRoom_Data/il2cpp_data/Metadata/global-metadata.dat` the 256 modulus bytes sit unobfuscated at **file offset 18057508** (exactly once; field-default blob). The repaired copy has them at 20446852.
+- The earlier static scans "found nothing" because of **a bug in my check**: for `00 01 ff` padding the test must be `m >> 2024 == 0x0001ff`; I used `m >> 2032 == 0x01ff`. The same bug made `dumpkey.py` print "not found". (Fixed lesson: sanity-test any scanner against a known positive first.)
+- `tools/patch/swap_signing_key.py <patched build dir>` overwrites those bytes with our own modulus (`certs/content-sign-modulus.hex`; private key `certs/content-sign-private.pem` is gitignored). It refuses on a hardlinked file and writes via temp+rename. **Careful:** `builds/2024-08-20-patched` shares most files with `builds/2024-08-20` by hardlink; an in-place write to a shared file changes the pristine build too (this happened once with the metadata file and was restored byte-for-byte against `builds/2024-08-20.zip`). Only `GameAssembly.dll`, `steam_api64.dll` and now `global-metadata.dat` are real copies in the patched dir.
+- Log shows the call shape: `DFLPDGILBGO.PNGODJMAFFD(string name, byte[] data, byte[] sig, byte[] modulus, byte[] exponent)`, reached from `CHCODGBONPB(string[] files, modulus, exponent, out Dictionary<string,byte[]>)` via the `/sigs/` response callback `HIDAPGOBHOF.EFFAGBCKNNF(serverResponse)`; the failing name is `verification.sig`.
+- Still unknown: the `/sigs/<guid>` response format and exactly which bytes are signed (raw SHA-256 of the file content and of the path were ruled out against the shipped per-line signatures).
+
 ## How it was found (what worked / what didn't)
 - Static scans of `global-metadata.dat` and `GameAssembly.dll` for a raw 256-byte modulus (both byte orders, PKCS and PSS tests): **nothing**. The data is not stored raw.
 - The static constructor of the key class is at VA `0x1808a62f0`: `+0x58 = new byte[0x100]` filled by `InitializeArray` (modulus), `+0x60 = byte[3]{01,00,01}` (exponent). The field data lives in `<PrivateImplementationDetails>` (no field entries in metadata).
