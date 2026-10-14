@@ -110,20 +110,26 @@ Entering a room instance means joining a Photon room (the client uses PUN 2 on P
 | 5055 (+27001) | master | authenticate, lobby, create/join/join-random → game server address; also echoes region pings |
 | 5056 (+27002) | game | create/join → local player is **actor 1 and master client**; RaiseEvent comes back when addressed to all, the master client or actor 1 (nothing is sent for "others"); Set/GetProperties stored and echoed as PropertiesChanged; Leave |
 
-Anything else gets an empty OK and a log line. The log is `logs/photon.log`, one line per operation with its parameters.
+Anything else gets an empty OK and a log line. The log is `logs/photon.log`, one line per operation with its parameters; a
+message that cannot be parsed is logged with its first 256 bytes in hex. Rooms are kept per app id and name, so the game's
+Realtime connection and a Photon Voice connection to a room of the same name stay separate, as on Photon Cloud.
 Addresses handed out are `REC_PHOTON_HOST` (default `127.0.0.1`) plus the port. The name server host the client dials
 (`ns.exitgames.com`) resolves to 127.0.0.1 through the netns wildcard DNS.
 
 What it implements of the wire protocol: Photon reliable UDP (connect/verify, per-channel ordered reliable delivery, acks,
-fragments both ways, resends, ping and server-time commands), GpBinaryV18 serialization, and the payload-encryption key exchange
-(DH Oakley-768, AES-256-CBC) that the client runs before authenticating. Custom types and other values the server doesn't need
-are kept as raw bytes and sent back unchanged. Not implemented: GpBinaryV16, datagram encryption, TCP/WebSocket transports,
-Photon Voice and Chat (the game may connect to those too; their requests will show in the log).
+fragments both ways, resends, ping and server-time commands), **both GpBinaryV18 and GpBinaryV16** (each connection uses the one
+its init message asks for), and the payload-encryption key exchange (DH Oakley-768, AES-256-CBC) the client runs before
+authenticating. Custom types and other values the server doesn't need are kept as raw bytes and sent back unchanged. Not
+implemented: datagram encryption, TCP/WebSocket transports, Photon Chat semantics (chat operations just get an OK), the
+room event cache (cached events are not replayed on rejoin).
 
 Verified with the real Photon client library (PUN 2's Photon3Unity3D 4.1.2.19 and its LoadBalancingClient, in a local test
-harness, not committed): fixed-region and region-ping connects, encrypted name-server auth, master → game, actor 1 / master
-client, player and room properties, events with object arrays and a 5,000-byte fragmented payload, and "Others" events dropped.
-The 2024 game's own copy of the library is newer and untested against this server.
+harness, not committed), in both V18 and V16: fixed-region and region-ping connects, encrypted name-server auth,
+master → game, actor 1 / master client, player and room properties, events up to a 5,000-byte fragmented payload,
+"Others" events dropped, a broad mix of values (a registered custom type and arrays of it, typed dictionaries,
+float/double/short/long/bool arrays, jagged arrays, hashtable arrays, edge-case numbers, non-ASCII strings) coming back
+identical through both an event and a room property, and a second client on the Voice app id joining a same-named room at
+the same time. The 2024 game's own copy of the library is newer and untested against this server.
 
 PhotonServerSettings in the 2024 build: Realtime AppId `9372aa8d-d3f4-44a0-986d-419e145a2b83`, Chat/Voice AppId
 `e93ae440-f238-4b6c-848f-1df89faf14f5`, UseNameServer, FixedRegion `usw`, UDP. The client may also take AppIds and region

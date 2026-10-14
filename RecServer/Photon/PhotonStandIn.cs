@@ -35,7 +35,7 @@ public sealed class PhotonStandIn : IDisposable
     private readonly int _masterPort, _gamePort;
     private readonly string[] _regions;
 
-    /// <summary>Rooms by name; offline there is one player, but the client may hop between rooms.</summary>
+    /// <summary>Rooms by app id and name: the game and its voice connection join rooms of the same name in different apps.</summary>
     private readonly Dictionary<string, Room> _rooms = new();
 
     private sealed class Room
@@ -52,6 +52,8 @@ public sealed class PhotonStandIn : IDisposable
         public string UserId = "";
         /// <summary>GpBinaryV16 instead of V18, as the client announced in its init message.</summary>
         public bool V16;
+        /// <summary>App id from the init message (Realtime, Voice and Chat use different ones, and rooms are per app).</summary>
+        public string App = "";
     }
 
     /// <param name="host">Address the client is sent to for master and game servers (it runs on the same machine).</param>
@@ -99,6 +101,7 @@ public sealed class PhotonStandIn : IDisposable
             {
                 string app = System.Text.Encoding.ASCII.GetString(m, 9, Math.Min(32, m.Length - 9)).TrimEnd('\0');
                 s.V16 = m[3] == 6;
+                s.App = app;
                 _log($"{peer.Role} peer {peer.PeerId}: init protocol {m[2]}.{m[3]} ({(s.V16 ? "GpBinaryV16" : "GpBinaryV18")}) app {app}");
                 if (m[3] is not (6 or 8)) _log($"  WARNING: unknown serialization protocol {m[2]}.{m[3]}; treating it as GpBinaryV18");
                 peer.SendReliable(new byte[] { 0xF3, 1, 0, 0 });   // InitResponse
@@ -226,7 +229,8 @@ public sealed class PhotonStandIn : IDisposable
         Room room;
         lock (_rooms)
         {
-            if (!_rooms.TryGetValue(name, out room!)) _rooms[name] = room = new Room { Name = name };
+            string key = s.App + "/" + name;
+            if (!_rooms.TryGetValue(key, out room!)) _rooms[key] = room = new Room { Name = name };
         }
         if (p.GetValueOrDefault(PGameProperties) is PhotonHashtable gp) foreach (var (k, v) in gp) room.Properties[k] = v;
         room.PlayerProperties = p.GetValueOrDefault(PPlayerProperties) as PhotonHashtable ?? new PhotonHashtable();
@@ -237,7 +241,7 @@ public sealed class PhotonStandIn : IDisposable
         room.Properties[GpPlayerCount] = (byte)1;
         room.Properties[GpMasterClientId] = LocalActor;
         s.Room = room;
-        _log($"  -> {(op.Code == OpCreateGame ? "created" : "joined")} room \"{name}\" as actor {LocalActor} (master client)");
+        _log($"  -> {(op.Code == OpCreateGame ? "created" : "joined")} room \"{name}\" (app {s.App}) as actor {LocalActor} (master client)");
 
         Respond(peer, op.Code, new()
         {
