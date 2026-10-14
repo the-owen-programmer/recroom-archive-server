@@ -116,8 +116,8 @@ public class RoomInstance
     /// <summary>Unity scene GUID the client loads.</summary>
     [JsonPropertyName("location")] public string Location { get; set; } = "";
     [JsonPropertyName("dataBlob")] public string? DataBlob { get; set; }
-    [JsonPropertyName("eventId")] public long? EventId { get; set; }
-    [JsonPropertyName("clubId")] public long? ClubId { get; set; }
+    [JsonPropertyName("eventId")] public long EventId { get; set; }   // 2024 client: a JSON null here is "malformed" (expects a number)
+    [JsonPropertyName("clubId")] public long ClubId { get; set; }
     [JsonPropertyName("roomCode")] public string? RoomCode { get; set; }
     [JsonPropertyName("photonRegionId")] public string PhotonRegionId { get; set; } = "us";
     [JsonPropertyName("photonRoomId")] public string PhotonRoomId { get; set; } = "";
