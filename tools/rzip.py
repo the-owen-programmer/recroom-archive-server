@@ -49,6 +49,18 @@ def get(url, e, out):
             f.write(d.decompress(chunk) if d else chunk)
         if d: f.write(d.flush())
 
+def read_prefix(url, e, nbytes=65536):
+    """The first ~nbytes of an entry's uncompressed content, reading only as much of the archive as that needs."""
+    name, meth, csz, usz, off = e
+    h, _ = rng(url, off, off + 29); nl, el = struct.unpack("<HH", h[26:30]); start = off + 30 + nl + el
+    chunk, _ = rng(url, start, start + min(csz, nbytes) - 1)
+    if meth != 8:
+        return chunk
+    try:
+        return zlib.decompressobj(-15).decompress(chunk)
+    except zlib.error:
+        return b""
+
 if __name__ == "__main__":
     url = sys.argv[1]; es = list(entries(url))
     if sys.argv[2] == "list":

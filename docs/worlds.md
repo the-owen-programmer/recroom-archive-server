@@ -31,7 +31,7 @@ archived JSON are kept and sent back unchanged. Keys that start with `_` (import
 To be **enterable**, a room needs a sub-room with a `UnitySceneId` (the Unity scene GUID in the game build) and, for
 player-built rooms, a `DataBlob` (name of the saved room on cdn.rec.net):
 ```json
-"SubRooms": [ { "Name": "Home", "UnitySceneId": "<scene guid>", "DataBlob": "room/<blob>.room" } ]
+"SubRooms": [ { "Name": "Home", "UnitySceneId": "<scene guid>", "DataBlob": "<blob>.room" } ]
 ```
 Archived room JSON never has SubRooms (the public API left them out). An imported room without them inherits the seed's
 sub-rooms for the same id, and a re-import keeps hand-added ones. Otherwise the server makes an empty "Home" sub-room.
@@ -134,3 +134,30 @@ the same time. The 2024 game's own copy of the library is newer and untested aga
 PhotonServerSettings in the 2024 build: Realtime AppId `9372aa8d-d3f4-44a0-986d-419e145a2b83`, Chat/Voice AppId
 `e93ae440-f238-4b6c-848f-1df89faf14f5`, UseNameServer, FixedRegion `usw`, UDP. The client may also take AppIds and region
 from `match.rec.net/player/connection-info` (boot layer); the stand-in accepts any AppId and region.
+
+## Room saves from archive.org (player-built worlds)
+A player room's content is its **save**: a `.room` blob on cdn.rec.net (`DataBlob` of a sub-room, file in
+`data/cdn/room/<blob>`). A save is protobuf, and at top level **field 4 is the Unity scene GUID** it was built in and
+**field 6 the room's RoomId** (field 1 = save format version, 17-38 seen). So a save alone is enough for an enterable room,
+and its RoomId links it to the archived room metadata. `tools/import_room_saves.py` imports them:
+
+- `ripped --item <id> --file <rar|zip>` (or `--dir <folder>`): community "ripped" collections laid out
+  `<creator>/<Room>/Subroom_<Name>/Saves/<time>/<SubRoomDataSaveId>.json + blob`. The JSON is the real API's
+  SubRoomDataSave record (SubRoomId, DataBlob, CreatedAt). One catalog room per folder, each sub-room on its newest
+  save, the folder's thumbnail as the room image. Files are fetched one by one through archive.org's archive viewer.
+  **Imported and tested: `afew-good-tacos_rooms_collection`**, 7 rooms by AFewGoodTacos with 17 sub-rooms (TacoLakeHouse
+  Summer/Winter/Night/Halloween, TacoRainyDay, TacoCove, TacoWinterDome, TacoWinterLodge, TacoLoft, TacoBayou), saves from
+  2019 to 1 June 2026, real RoomIds for 6 of them. Credit: AFewGoodTacos (creator), splootybean (rip), Nosynose326 (upload).
+- `dump --item recroom-cdn-room-files-<n> [--limit N] [--list]`: the 16 anonymous "Rec Room CDN room files" items
+  (~8,800 saves each, ~9.5 GB per zip, about 140,000 saves in all, filenames only). Reads each save straight out of the
+  remote zip (prefix first, whole entry if needed) for scene and RoomId; `--list` prints a CSV index without
+  downloading. Imported rooms are named `Archived<RoomId>` until their metadata is imported
+  (`tools/import_rooms.py wayback --id <RoomId>`), which fills in the real name, description, stats and thumbnail.
+
+Other archive.org items found (2026-10-14; not imported, listed for later): `archiveteam_recroom_*` (Archive Team WARCs,
+also behind the Wayback captures), `rec-room-cdn-images` / `recroom-cdn-images-*` (img.rec.net), `rrimage-exporter.-7z`
+(200 GB photo archive), `recroom-cdn-assetbundle-*` and `recroom-cdn-htr-*` (CDN asset bundles / HTR files, likely
+inventions and avatar items), `all-rec-room-items` (avatar clothing), `rrtexturearchive`, `RecRoomBuildArchive` (builds),
+`rec-room-creator-press-kits`, many per-player "Rec Room profile" items (may contain more ripped rooms), and
+`enumrec_publicAPIscrape` (a post-shutdown community revival's API scrape, EnumRec; not original Rec Room data, but its
+room records confirm the `SubRooms[].CurrentSave` / Maker Room scene shapes).
