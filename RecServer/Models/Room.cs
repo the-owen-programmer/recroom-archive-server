@@ -142,7 +142,7 @@ public class PlayerPresence
     [JsonPropertyName("deviceClass")] public int DeviceClass { get; set; }
     [JsonPropertyName("vrMovementMode")] public int VrMovementMode { get; set; }
     [JsonPropertyName("roomInstance")] public RoomInstance? RoomInstance { get; set; }
-    [JsonPropertyName("correlationId")] public string CorrelationId { get; set; } = "";
+    [JsonPropertyName("correlationId")] public string? CorrelationId { get; set; }   // client type is a nullable Guid: "" is rejected as malformed
     [JsonPropertyName("isOnline")] public bool IsOnline { get; set; } = true;
     [JsonPropertyName("appVersion")] public string? AppVersion { get; set; }
     [JsonPropertyName("clientJoinDataJson")] public string? ClientJoinDataJson { get; set; }

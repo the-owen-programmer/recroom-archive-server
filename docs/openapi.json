@@ -848,6 +848,31 @@
           "Post-login batch"
         ],
         "summary": "Player settings upload (the client PUTs the whole settings list). Accepted and ignored.",
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "key": {
+                    "type": "string"
+                  },
+                  "value": {
+                    "type": "string"
+                  }
+                }
+              },
+              "encoding": {
+                "key": {
+                  "style": "form"
+                },
+                "value": {
+                  "style": "form"
+                }
+              }
+            }
+          }
+        },
         "responses": {
           "200": {
             "description": "OK"
@@ -1336,6 +1361,32 @@
           "Post-login batch"
         ],
         "summary": "Email prompt of the account setup flow (the player may answer \"no thanks\"). Accepted and ignored.",
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/sampling": {
+      "get": {
+        "tags": [
+          "Post-login batch"
+        ],
+        "summary": "Telemetry sampling config (the client asks per session). Sampling off; shape is a guess.",
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/config/v2": {
+      "get": {
+        "tags": [
+          "Post-login batch"
+        ],
+        "summary": "Main remote config. Minimal guessed shape; the client falls back to built-in defaults for missing values.",
         "responses": {
           "200": {
             "description": "OK"
@@ -2097,7 +2148,7 @@
             "type": "integer",
             "format": "int32"
           },
-          "platform": {
+          "platformType": {
             "type": "integer",
             "format": "int32"
           },
@@ -2112,6 +2163,10 @@
           "roomInstance": {
             "$ref": "#/components/schemas/RoomInstance"
           },
+          "correlationId": {
+            "type": "string",
+            "nullable": true
+          },
           "isOnline": {
             "type": "boolean"
           },
@@ -2119,13 +2174,18 @@
             "type": "string",
             "nullable": true
           },
-          "lastOnline": {
+          "clientJoinDataJson": {
             "type": "string",
-            "format": "date-time"
+            "nullable": true
+          },
+          "clientJoinData": { },
+          "playerType": {
+            "type": "integer",
+            "format": "int32"
           }
         },
         "additionalProperties": false,
-        "description": "Where a player is; match.rec.net `/player` and heartbeat responses."
+        "description": "Where a player is; match.rec.net `/player` and heartbeat responses. Field names from the client's PlayerPresence type\n(Android class dump, relayed by the boot agent): PlayerId, StatusVisibility, PlatformType, DeviceClass, VRMovementMode,\nRoomInstance, CorrelationId, IsOnline, AppVersion, ClientJoinDataJson, ClientJoinData, PlayerType. Sent camelCase like the\nrest of match.rec.net; the client's JSON reader matched the camelCase accounts responses, so casing should not matter."
       },
       "Room": {
         "type": "object",

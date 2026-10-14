@@ -143,7 +143,7 @@ public class PostLoginController : ControllerBase
 
     /// <summary>Telemetry sampling config (the client asks per session). Sampling off; shape is a guess.</summary>
     [Host("datacollection.rec.net")][HttpGet("/sampling")]
-    public object Sampling() => new { SampleRate = 0.0 };
+    public object[] Sampling() => None;   // verified: a bare list is accepted; {"SampleRate":0} is rejected and makes the client quit
 
     /// <summary>Main remote config. Minimal guessed shape; the client falls back to built-in defaults for missing values.</summary>
     [Host("api.rec.net")][HttpGet("/api/config/v2")]
