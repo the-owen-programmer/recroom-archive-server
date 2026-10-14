@@ -89,8 +89,8 @@ app.MapControllers();
 var stubs = new (string Host, System.Text.RegularExpressions.Regex Path, string Body)[]
 {
     ("cdn.rec.net", new(@"^/config/LoadingScreenTipData$"), "[]"),
-    ("api.rec.net", new(@"^/api/quickPlay/v1/getandclear$"), "[]"),
-    ("api.rec.net", new(@"^/api/config/v1/backtrace$"), "{}"),
+    ("api.rec.net", new(@"^/api/quickPlay/v1/getandclear$"), "{}"),
+    ("api.rec.net", new(@"^/api/config/v1/backtrace$"), "0"),
     ("api.rec.net", new(@"^/api/config/v1/azurespeech$"), "{}"),
     ("api.rec.net", new(@"^/api/PlayerReporting/v1/voteToKickReasons$"), "[]"),
     ("api.rec.net", new(@"^/outfits/me/saved$"), "{\"Outfits\":[]}"),

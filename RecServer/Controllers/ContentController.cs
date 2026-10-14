@@ -61,7 +61,12 @@ public class CdnController : ControllerBase
     public IActionResult Get(string? path)
     {
         var file = string.IsNullOrEmpty(path) ? null : _data.SafePath("cdn", path);
-        if (file == null || !System.IO.File.Exists(file)) return NotFound();
+        if (file == null || !System.IO.File.Exists(file))
+        {
+            // guessed empty answer so the client does not log "no tips downloaded"; replace with the real list if one is ever archived
+            if (string.Equals(path, "config/LoadingScreenTipData", StringComparison.OrdinalIgnoreCase)) return Content("[]", "application/json");
+            return NotFound();
+        }
         return PhysicalFile(file, ContentType(file), enableRangeProcessing: true);
     }
 
